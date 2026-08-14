@@ -7,8 +7,8 @@
     
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- FontAwesome 6.5.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
     <!-- Favicon -->
@@ -29,7 +29,7 @@
                 <img src="../img/logo_nuevo.svg" alt="FactuWeb PRO Logo" class="logo-img">
             </a>
             <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <i class="bi bi-list text-white fs-1"></i>
+                <i class="fa-solid fa-bars text-white fs-2"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto align-items-lg-center">
@@ -39,11 +39,11 @@
                     <li class="nav-item"><a class="nav-link" href="#beneficios">Beneficios</a></li>
                 </ul>
                 <div class="d-flex align-items-center mt-3 mt-lg-0 gap-3">
-                    <a class="btn btn-white px-4" href="login.html">Ingresar</a>
+                    <a class="btn btn-white px-4" href="../views/auth/login.php">Ingresar</a>
                     <div class="social-icons d-none d-lg-block">
-                        <a href="#"><i class="bi bi-facebook"></i></a>
-                        <a href="#"><i class="bi bi-instagram"></i></a>
-                        <a href="#"><i class="bi bi-youtube"></i></a>
+                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
                     </div>
                 </div>
             </div>
@@ -64,20 +64,20 @@
                     <div class="hero-cta-wrapper mt-4">
                         <div class="d-flex flex-column flex-sm-row gap-3">
                             <a href="login.html" class="btn btn-super-cta">
-                                Comenzar Ahora <i class="bi bi-arrow-right-circle-fill ms-2"></i>
+                                Comenzar Ahora <i class="fa-solid fa-circle-arrow-right ms-2"></i>
                             </a>
                             <a href="#demo" class="btn btn-outline-hero">
-                                <i class="bi bi-play-circle-fill me-2"></i> Ver Demostración
+                                <i class="fa-solid fa-circle-play me-2"></i> Ver Demostración
                             </a>
                         </div>
                         <div class="mt-3 text-white-50 small d-flex align-items-center gap-3">
-                            <span><i class="bi bi-check-circle text-success me-1"></i> Configuración en 5 min</span>
-                            <span><i class="bi bi-check-circle text-success me-1"></i> Soporte VIP</span>
+                            <span><i class="fa-solid fa-circle-check text-success me-1"></i> Configuración en 5 min</span>
+                            <span><i class="fa-solid fa-circle-check text-success me-1"></i> Soporte VIP</span>
                         </div>
                     </div>
                     
                     <div class="trust-badge shadow">
-                        4.9 <i class="bi bi-star-fill"></i> en <strong>&nbsp;Trustpilot</strong>
+                        4.9 <i class="fa-solid fa-star"></i> en <strong>&nbsp;Trustpilot</strong>
                     </div>
                 </div>
                 
@@ -86,7 +86,7 @@
                     <div class="hero-mockup-wrapper">
                         <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-3 mb-4">
                             <h5 class="m-0 fw-bold text-white">
-                                <i class="bi bi-grid-fill me-2 text-primary"></i>Panel de Control
+                                <i class="fa-solid fa-border-all me-2 text-primary"></i>Panel de Control
                             </h5>
                             <div class="d-flex gap-2">
                                 <span class="badge bg-success rounded-pill px-3 py-2">En Línea</span>
@@ -205,7 +205,7 @@
 
     <!-- Botón Flotante WhatsApp -->
     <a href="#" class="whatsapp-float" target="_blank">
-        <i class="bi bi-whatsapp"></i>
+        <i class="fa-brands fa-whatsapp"></i>
     </a>
 
     <!-- Footer -->
@@ -222,9 +222,9 @@
                 </div>
                 <div class="col-md-4 text-md-end">
                     <div class="social-icons mb-2">
-                        <a href="#" class="text-white text-decoration-none me-3 fs-5"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-white text-decoration-none me-3 fs-5"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-white text-decoration-none fs-5"><i class="bi bi-youtube"></i></a>
+                        <a href="#" class="text-white text-decoration-none me-3 fs-5"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="text-white text-decoration-none me-3 fs-5"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="text-white text-decoration-none fs-5"><i class="fa-brands fa-youtube"></i></a>
                     </div>
                     <span class="opacity-50 small">&copy; 2026 FactuWeb PRO. Todos los derechos reservados.</span>
                 </div>

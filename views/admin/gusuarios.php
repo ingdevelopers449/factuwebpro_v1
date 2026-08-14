@@ -142,7 +142,7 @@ require_once '../layouts/header.php';
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="../../controllers/registerControllerAdmin.php" method="POST" class="needs-validation" novalidate>
+            <form action="../../controllers/RegisterUsuarioAdmin.php" method="POST" class="needs-validation" novalidate>
                 <div class="modal-body p-4 d-flex flex-column gap-3">
                     <div class="row g-3">
                         <div>
@@ -209,7 +209,7 @@ require_once '../layouts/header.php';
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="../../controllers/editControllerAdmin.php?accion=update" method="POST" class="needs-validation" novalidate>
+            <form action="../../controllers/EditUsuarioController.php" method="POST" class="needs-validation" novalidate>
                 <div class="modal-body p-4 d-flex flex-column gap-3">
                     <div class="row g-3">
                         <div class="col-3">

@@ -11,15 +11,15 @@ class Usuario
         $this->conn = $conn;
     }
 
-    public function registrar(string $email, string $password_hash, int $id_rol = 2, string $estado = 'Activo')
+    public function registrar(int $id_empresa, string $nombre, string $email, string $password, int $id_rol, string $estado)
     {
-        $hashed_password = password_hash($password_hash, PASSWORD_BCRYPT);
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-        $query = 'INSERT INTO usuarios (email, password_hash, id_rol, estado, fecha_creacion) VALUES (?, ?, ?, ?, NOW())';
+        $query = 'INSERT INTO usuarios (id_empresa, nombre, email, password_hash, id_rol, estado) VALUES (?, ?, ?, ?, ?, ?)';
 
         $stmt = $this->conn->prepare($query);
         if ($stmt) {
-            $stmt->bind_param('ssis', $email, $hashed_password, $id_rol, $estado);
+            $stmt->bind_param('isssis', $id_empresa, $nombre, $email, $hashed_password, $id_rol, $estado);
             $result = $stmt->execute();
             $stmt->close();
             return $result;
@@ -75,8 +75,8 @@ class Usuario
     public function obtenerEstados()
     {
         return [
-            'Activo' => 'Activo',
-            'Inactivo' => 'Inactivo'
+            'activo' => 'Activo',
+            'inactivo' => 'Inactivo'
         ];
     }
 

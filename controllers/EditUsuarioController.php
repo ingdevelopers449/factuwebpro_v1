@@ -2,7 +2,7 @@
 session_start();
 require_once __DIR__ . '/../models/Usuario.php';
 
-function mostrarAlerta($type, $title, $text, $redirectUrl) {
+function mostrarAlerta(string $type, string $title, string $text, string $redirectUrl) {
     echo "
     <!DOCTYPE html>
     <html lang='es'>
@@ -79,35 +79,34 @@ function mostrarAlerta($type, $title, $text, $redirectUrl) {
     exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nombre = trim($_POST['nombre'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-    $rol = $_POST['id_rol'] ?? '';
-    $estado = $_POST['estado'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id_usuario = $_POST['id_usuario'] ?? null;
     
-    // Obtener id_empresa de la sesión actual
-    $id_empresa = $_SESSION['usuario']['id_empresa'] ?? 1;
+    if (!$id_usuario) {
+        mostrarAlerta('error', 'Error', 'ID de usuario no proporcionado', '../views/admin/gusuarios.php');
+    }
 
-    if (empty($nombre) || empty($email) || empty($password) || empty($rol) || empty($estado)) {
-        mostrarAlerta('error', 'Campos obligatorios', 'Todos los campos son obligatorios.', '../views/admin/gusuarios.php');
+    $datos = [
+        'nombre' => trim($_POST['nombre'] ?? ''),
+        'email' => trim($_POST['email'] ?? ''),
+        'rol' => trim($_POST['rol'] ?? ''),
+        'estado' => $_POST['estado'] ?? ''
+    ];
+
+    if (empty($datos['nombre']) || empty($datos['email']) || empty($datos['rol']) || empty($datos['estado'])) {
+        mostrarAlerta('error', 'Campos obligatorios', 'Todos los campos obligatorios (*) deben ser completados.', '../views/admin/gusuarios.php');
     }
 
     $usuarioModel = new Usuario();
+    $resultado = $usuarioModel->actualizar($id_usuario, $datos);
 
-    if ($usuarioModel->emailExiste($email)) {
-        mostrarAlerta('error', 'Correo registrado', 'El email ya está registrado.', '../views/admin/gusuarios.php');
-    }
-
-    $registrado = $usuarioModel->registrar($id_empresa, $nombre, $email, $password, $rol, $estado);
-
-    if ($registrado) {
-        mostrarAlerta('success', '¡Registro Exitoso!', 'Cuenta creada exitosamente.', '../views/admin/gusuarios.php');
+    if ($resultado === true) {
+        mostrarAlerta('success', '¡Éxito!', 'Usuario actualizado correctamente.', '../views/admin/gusuarios.php');
     } else {
-        mostrarAlerta('error', 'Error de registro', 'Hubo un error al registrar. Verifica tu conexión o intenta más tarde.', '../views/admin/gusuarios.php');
+        mostrarAlerta('error', 'Error', 'No se pudo actualizar el usuario. ' . $resultado, '../views/admin/gusuarios.php');
     }
 } else {
-    header("Location: ../views/admin/gusuarios.php");
+    header('Location: ../views/admin/gusuarios.php');
     exit();
 }
 ?>

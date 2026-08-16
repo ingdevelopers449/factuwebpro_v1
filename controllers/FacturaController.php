@@ -15,27 +15,26 @@ class FacturaController
         ];
     }
 
-    public function index()
+    public function init_pos()
     {
+        header('Content-Type: application/json');
+        
         $clienteModel = new Cliente();
         $productoModel = new Producto();
 
-        // Obtener datos activos para el POS
-        $clientes = $clienteModel->obtenerTodos(); // Idealmente solo activos
+        $clientes = $clienteModel->obtenerTodos(); 
         
-        // Obtener solo productos activos y con stock para la venta
-        // Podemos usar obtenerTodos y filtrar, o modificar el modelo. Aquí filtramos por simplicidad y robustez.
         $todosProductos = $productoModel->obtenerTodos();
         $productosVenta = array_filter($todosProductos, function($p) {
             return strtolower($p['estado_producto']) === 'activo' && $p['stock_actual'] > 0;
         });
 
-        $current_page = 'facturas.php';
-
-        return [
-            'clientes' => $clientes,
-            'productos' => array_values($productosVenta), // reindexar
-        ];
+        echo json_encode([
+            'success' => true,
+            'clientes' => array_values($clientes),
+            'productos' => array_values($productosVenta)
+        ]);
+        exit;
     }
 
     public function procesar()
@@ -45,7 +44,6 @@ class FacturaController
             exit;
         }
 
-        // Leer datos JSON enviados por fetch/axios
         $json = file_get_contents('php://input');
         $data = json_decode($json, true);
 
@@ -54,7 +52,7 @@ class FacturaController
             exit;
         }
 
-        $id_empresa = $_SESSION['usuario']['id_empresa'] ?? 1; // Asumiendo empresa 1 si no está en sesión por ahora
+        $id_empresa = $_SESSION['usuario']['id_empresa'] ?? 1;
         $id_usuario = $_SESSION['usuario']['id_usuario'] ?? null;
         $id_cliente = !empty($data['id_cliente']) ? (int)$data['id_cliente'] : null;
         
@@ -81,11 +79,12 @@ class FacturaController
         if ($action === 'procesar') {
             header('Content-Type: application/json');
             $this->procesar();
+        } elseif ($action === 'init_pos') {
+            $this->init_pos();
         }
     }
 }
 
-// Si es una petición AJAX/POST directa a la acción
 if (isset($_GET['action'])) {
     $controller = new FacturaController();
     $controller->run();

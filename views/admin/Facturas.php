@@ -1,10 +1,7 @@
 <?php 
-// Vista de Facturación POS
-require_once '../../controllers/FacturaController.php';
-
-$controller = new FacturaController();
-extract($controller->index()); // Extrae $clientes y $productos
-
+// Vista de Facturación POS - Pura (Sin Backend)
+// Define la página actual para que el header resalte el menú activo
+$current_page = 'facturas.php';
 require_once '../layouts/header.php'; 
 ?>
 
@@ -20,8 +17,14 @@ require_once '../layouts/header.php';
         </div>
     </div>
 
-    <!-- Interfaz POS -->
-    <div class="row flex-grow-1 g-4">
+    <!-- Indicador de Carga -->
+    <div id="loaderPOS" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted fw-bold">Cargando catálogo y clientes...</p>
+    </div>
+
+    <!-- Interfaz POS (Oculta hasta cargar) -->
+    <div class="row flex-grow-1 g-4 d-none" id="interfazPOS">
         
         <!-- COLUMNA IZQUIERDA: Catálogo de Productos -->
         <div class="col-lg-7 d-flex flex-column">
@@ -50,9 +53,7 @@ require_once '../layouts/header.php';
                     <label class="form-label fw-semibold small text-secondary mb-1">Cliente asignado a la factura</label>
                     <select id="selectCliente" class="form-select border-0 shadow-sm">
                         <option value="">Consumidor Final (Opcional)</option>
-                        <?php foreach($clientes as $cliente): ?>
-                            <option value="<?= $cliente['id_cliente'] ?>"><?= htmlspecialchars($cliente['identificacion'] . ' - ' . $cliente['nombre_razon_social']) ?></option>
-                        <?php endforeach; ?>
+                        <!-- Opciones dinámicas de clientes vía JS -->
                     </select>
                 </div>
 
@@ -99,14 +100,16 @@ require_once '../layouts/header.php';
 </div>
 
 <script>
-    // 1. Cargar datos desde PHP a JS
-    const catalogoProductos = <?= json_encode($productos) ?>;
-    
-    // 2. Estado del Carrito
+    // 1. Estado de Datos
+    let catalogoProductos = [];
+    let listaClientes = [];
     let carrito = [];
 
-    // 3. Referencias DOM
-    const listaProductos = document.getElementById('listaProductos');
+    // 2. Referencias DOM
+    const loaderPOS = document.getElementById('loaderPOS');
+    const interfazPOS = document.getElementById('interfazPOS');
+    
+    const listaProductosUI = document.getElementById('listaProductos');
     const buscadorProductos = document.getElementById('buscadorProductos');
     const cuerpoCarrito = document.getElementById('cuerpoCarrito');
     
@@ -116,9 +119,44 @@ require_once '../layouts/header.php';
     const btnProcesar = document.getElementById('btnProcesar');
     const selectCliente = document.getElementById('selectCliente');
 
+    // 3. Obtener Datos por AJAX (Separación Frontend-Backend)
+    async function inicializarPOS() {
+        try {
+            const response = await fetch('../../controllers/FacturaController.php?action=init_pos');
+            const data = await response.json();
+            
+            if (data.success) {
+                catalogoProductos = data.productos;
+                listaClientes = data.clientes;
+                
+                cargarClientes(listaClientes);
+                renderizarCatalogo();
+                actualizarCarrito();
+
+                // Mostrar interfaz
+                loaderPOS.classList.add('d-none');
+                interfazPOS.classList.remove('d-none');
+            } else {
+                Swal.fire('Error', 'No se pudo cargar la información del POS.', 'error');
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Error de conexión', 'No se pudo comunicar con el servidor.', 'error');
+        }
+    }
+
+    function cargarClientes(clientes) {
+        clientes.forEach(cliente => {
+            const option = document.createElement('option');
+            option.value = cliente.id_cliente;
+            option.textContent = `${cliente.identificacion} - ${cliente.nombre_razon_social}`;
+            selectCliente.appendChild(option);
+        });
+    }
+
     // 4. Renderizar Catálogo
     function renderizarCatalogo(filtro = '') {
-        listaProductos.innerHTML = '';
+        listaProductosUI.innerHTML = '';
         
         const termino = filtro.toLowerCase();
         const filtrados = catalogoProductos.filter(p => 
@@ -127,7 +165,7 @@ require_once '../layouts/header.php';
         );
 
         if (filtrados.length === 0) {
-            listaProductos.innerHTML = `<div class="p-4 text-center text-muted">No se encontraron productos.</div>`;
+            listaProductosUI.innerHTML = `<div class="p-4 text-center text-muted">No se encontraron productos.</div>`;
             return;
         }
 
@@ -135,7 +173,6 @@ require_once '../layouts/header.php';
             const precioFormatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
             const precioVenta = parseFloat(p.precio_venta);
             
-            // Item del listgroup
             const div = document.createElement('a');
             div.href = '#';
             div.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center p-3 border-bottom';
@@ -154,16 +191,15 @@ require_once '../layouts/header.php';
                     <small class="text-muted">IVA ${parseFloat(p.tarifa_iva)}%</small>
                 </div>
             `;
-            listaProductos.appendChild(div);
+            listaProductosUI.appendChild(div);
         });
     }
 
     // 5. Manejo del Carrito
-    function agregarAlCarrito(productoDB) {
+    window.agregarAlCarrito = function(productoDB) {
         const index = carrito.findIndex(item => item.id_producto === productoDB.id_producto);
         
         if (index > -1) {
-            // Validar stock
             if(carrito[index].cantidad + 1 > productoDB.stock_actual) {
                 Swal.fire('Stock Insuficiente', 'No hay suficientes existencias de este producto.', 'warning');
                 return;
@@ -186,12 +222,12 @@ require_once '../layouts/header.php';
         actualizarCarrito();
     }
 
-    function removerDelCarrito(index) {
+    window.removerDelCarrito = function(index) {
         carrito.splice(index, 1);
         actualizarCarrito();
     }
 
-    function modificarCantidad(index, delta) {
+    window.modificarCantidad = function(index, delta) {
         const item = carrito[index];
         const nuevaCant = item.cantidad + delta;
         if (nuevaCant <= 0) {
@@ -204,7 +240,7 @@ require_once '../layouts/header.php';
         }
     }
 
-    function actualizarCarrito() {
+    window.actualizarCarrito = function() {
         cuerpoCarrito.innerHTML = '';
         
         let subtotalGlobal = 0;
@@ -217,13 +253,6 @@ require_once '../layouts/header.php';
             cuerpoCarrito.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-muted small">El carrito está vacío</td></tr>`;
         } else {
             carrito.forEach((item, index) => {
-                // Matemáticas:
-                // Asumimos que el precio de venta YA INCLUYE el IVA o NO. 
-                // Por estándar comercial colombiano POS, usualmente el precio al público incluye IVA. 
-                // Si incluye IVA, el subtotal = (precio / (1 + %iva))
-                // Si el precio de venta es Base (sin IVA), entonces total = precio + iva.
-                // Para ser simples (como en el mockup), asumiremos que el Precio de Venta es BASE, y se le suma el IVA al final.
-                
                 const subtotalLinea = item.precio * item.cantidad;
                 const ivaLinea = subtotalLinea * (item.iva / 100);
                 const totalLinea = subtotalLinea + ivaLinea;
@@ -256,23 +285,20 @@ require_once '../layouts/header.php';
             });
         }
 
-        // Actualizar UI Totales
         txtSubtotal.textContent = formatter.format(subtotalGlobal);
         txtIva.textContent = formatter.format(ivaGlobal);
         txtTotal.textContent = formatter.format(totalGlobal);
         
-        // Guardar valores en un atributo data para fácil acceso al procesar
         btnProcesar.dataset.subtotal = subtotalGlobal;
         btnProcesar.dataset.iva = ivaGlobal;
         btnProcesar.dataset.total = totalGlobal;
     }
 
-    // 6. Buscador
+    // 6. Eventos
     buscadorProductos.addEventListener('input', (e) => {
         renderizarCatalogo(e.target.value);
     });
 
-    // 7. Procesar Venta
     btnProcesar.addEventListener('click', () => {
         if (carrito.length === 0) {
             Swal.fire('Carrito Vacío', 'Agrega al menos un producto para facturar.', 'warning');
@@ -287,7 +313,6 @@ require_once '../layouts/header.php';
             detalles: carrito
         };
 
-        // UI Loading
         btnProcesar.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> PROCESANDO...';
         btnProcesar.disabled = true;
 
@@ -299,7 +324,6 @@ require_once '../layouts/header.php';
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Como seteamos una alerta de sesión en PHP, solo recargamos y el layout mostrará el SweetAlert
                 window.location.reload();
             } else {
                 Swal.fire('Error al Facturar', data.error || 'Error desconocido', 'error');
@@ -315,11 +339,8 @@ require_once '../layouts/header.php';
         });
     });
 
-    // Inicializar
-    document.addEventListener('DOMContentLoaded', () => {
-        renderizarCatalogo();
-        actualizarCarrito();
-    });
+    // Arrancar la inicialización AJAX al cargar el DOM
+    document.addEventListener('DOMContentLoaded', inicializarPOS);
 
 </script>
 

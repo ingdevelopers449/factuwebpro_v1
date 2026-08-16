@@ -32,7 +32,7 @@ if (!isset($_SESSION['usuario'])) {
         <!-- Main Wrapper -->
         <div class="app-main flex-grow-1 d-flex flex-column overflow-hidden">
             <!-- Topbar -->
-            <header class="app-topbar d-flex justify-content-between align-items-center p-3 bg-white border-bottom shadow-sm z-1">
+            <header class="app-topbar d-flex justify-content-between align-items-center px-3 bg-white border-bottom shadow-sm z-1" style="height: 80px; min-height: 80px;">
                 <button class="btn btn-light d-md-none" id="toggleSidebar">
                     <i class="fa-solid fa-bars"></i>
                 </button>

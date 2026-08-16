@@ -1,11 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700&display=swap');
+
+/* --- SITEMA DE DISEÑO (Design System) --- */
+:root {
+    /* Tipografía */
+    --font-primary: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Outfit', system-ui, -apple-system, sans-serif;
+
+    /* Escala Tipográfica (Typography Scale) */
+    --text-xs: 0.75rem;    /* 12px */
+    --text-sm: 0.875rem;   /* 14px */
+    --text-base: 1rem;     /* 16px */
+    --text-lg: 1.125rem;   /* 18px */
+    --text-xl: 1.25rem;    /* 20px */
+    --text-2xl: 1.5rem;    /* 24px */
+    --text-3xl: 1.875rem;  /* 30px */
+    --text-4xl: 2.25rem;   /* 36px */
+    
+    /* Pesos (Font Weights) */
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+}
 
 /* Generales */
 body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-primary);
+    font-size: var(--text-base);
     color: #1e293b;
     background-color: #f8fafc;
     overflow-x: hidden;
+}
+
+/* Global Headings */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    color: #0f172a;
 }
 
 /* Banner Superior (Estilo Factus) */
@@ -25,7 +56,10 @@ body {
 
 /* Navbar */
 .navbar-custom {
-    background-color: #12102f; /* Azul súper oscuro */
+    background: rgba(18, 16, 47, 0.85); /* Azul súper oscuro semitransparente */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     padding: 1.5rem 0;
 }
 .navbar-custom .nav-link {
@@ -57,7 +91,8 @@ body {
 
 /* Botones (Inspirados en la referencia) */
 .btn {
-    font-weight: 600;
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 .btn:hover {
@@ -428,17 +463,39 @@ footer {
 }
 .app-sidebar {
     width: 260px;
+    min-width: 260px;
+    flex-shrink: 0;
     background: linear-gradient(135deg, #0b1120 0%, #171033 100%);
     display: flex;
     flex-direction: column;
     transition: transform 0.3s ease;
     z-index: 1040;
 }
+.sidebar-nav {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-wrap: nowrap !important;
+}
+/* Scrollbar ultra delgado y elegante para el sidebar */
+.sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
 .sidebar-nav .nav-link {
     color: #94a3b8;
-    padding: 0.85rem 1.5rem;
-    font-weight: 500;
-    font-size: 0.95rem;
+    padding: 0.7rem 1.5rem;
+    font-weight: var(--fw-medium);
+    font-size: var(--text-sm);
     display: flex;
     align-items: center;
     border-left: 4px solid transparent;

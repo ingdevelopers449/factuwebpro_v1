@@ -30,22 +30,7 @@ require_once '../layouts/header.php';
                     </button>
                 </div>
 
-                <?php if (isset($_SESSION['alert'])): ?>
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            Swal.fire({
-                                icon: '<?= htmlspecialchars($_SESSION['alert']['icon']) ?>',
-                                title: '<?= htmlspecialchars($_SESSION['alert']['title']) ?>',
-                                text: '<?= htmlspecialchars($_SESSION['alert']['text']) ?>',
-                                confirmButtonColor: '#10b981',
-                                background: '#1e293b',
-                                color: '#fff'
-                            });
-                        });
-                    </script>
-                    <?php unset($_SESSION['alert']); ?>
-                <?php endif; ?>
+
 
                 <!-- Table -->
                 <div class="mt-2 table-responsive">
@@ -268,29 +253,6 @@ require_once '../layouts/header.php';
     </div>
 </div>
 
-<!-- Modal Eliminar Usuario (Bootstrap modal) -->
-<div class="modal fade" id="eliminar" tabindex="-1" aria-labelledby="eliminarLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
-        <div class="modal-content border-0 rounded-4 shadow-lg">
-            <div class="modal-header border-bottom border-light p-4">
-                <h5 class="modal-title fw-bold text-dark" id="eliminarLabel">
-                    <i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>Confirmar Acción
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="../../controllers/editControllerAdmin.php?accion=delete" method="POST">
-                <input type="hidden" name="id_usuario" id="delete_id_usuario">
-                <div class="modal-body p-4 text-center">
-                    <p class="mb-0 text-secondary">¿Estás seguro de que deseas eliminar este usuario? <br><strong class="text-danger">Esta acción no se puede deshacer.</strong></p>
-                </div>
-                <div class="modal-footer border-top border-light p-4 justify-content-center">
-                    <button type="button" class="btn btn-light border rounded-3 px-4" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger px-4">Sí, Eliminar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -368,12 +330,43 @@ require_once '../layouts/header.php';
             ]
         });
 
-        // Trigger dynamic delete modal
+        // Trigger dynamic delete modal via SweetAlert2
         $(document).on('click', '.deletebtn', function() {
             var id = $(this).data('id');
-            $('#delete_id_usuario').val(id);
-            var delModal = new bootstrap.Modal(document.getElementById('eliminar'));
-            delModal.show();
+            Swal.fire({
+                title: 'Confirmar Acción',
+                html: '¿Estás seguro de que deseas eliminar este usuario?<br><strong style="color: #ef4444;">Esta acción no se puede deshacer.</strong>',
+                icon: 'warning',
+                iconColor: '#ef4444',
+                showCancelButton: true,
+                background: 'transparent',
+                color: '#fff',
+                confirmButtonText: 'Sí, Eliminar',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    popup: 'glass-alert',
+                    title: 'alert-title',
+                    confirmButton: 'btn btn-danger px-4 mx-2 rounded-3 border-0 shadow-sm',
+                    cancelButton: 'btn btn-light px-4 mx-2 rounded-3 border-0 text-dark shadow-sm',
+                    backdrop: 'swal-blur-backdrop'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '../../controllers/DeletedUsuarioController.php';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'id_usuario';
+                    input.value = id;
+                    
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
         });
     });
 </script>

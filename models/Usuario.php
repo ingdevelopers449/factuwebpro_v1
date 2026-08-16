@@ -82,9 +82,9 @@ class Usuario
 
     public function actualizar(int $id_usuario, array $datos)
     {
-        $query = 'UPDATE usuarios SET id_rol = ?, estado = ?';
-        $types = 'si';
-        $params = [$datos['id_rol'], $datos['estado']];
+        $query = 'UPDATE usuarios SET nombre = ?, id_rol = ?, estado = ?';
+        $types = 'sis';
+        $params = [$datos['nombre'], $datos['id_rol'], $datos['estado']];
 
         if (!empty($datos['email'])) {
             $query .= ', email = ?';

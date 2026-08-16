@@ -5,7 +5,7 @@
         </a>
     </div>
 
-    <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
+    <?php $current_page = $current_page ?? basename($_SERVER['PHP_SELF']); ?>
     <ul class="nav flex-column sidebar-nav mt-3 overflow-auto pb-5">
         <li class="nav-item">
             <a href="../../views/admin/dashboard.php" class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>">
@@ -31,26 +31,33 @@
                 <i class="fa-solid fa-box-open"></i> Productos
             </a>
         </li>
-        <li class="nav-item">
-            <a href="../../views/admin/categorias.php" class="nav-link <?php echo ($current_page == 'categorias.php') ? 'active' : ''; ?>">
-                <i class="fa-solid fa-tags"></i> Categorías
-            </a>
-        </li>
 
         <li class="nav-item px-3 mt-4 mb-2 text-white-50 small fw-bold text-uppercase" style="letter-spacing: 1px;">Administración</li>
         <li class="nav-item">
-            <a href="../../views/admin/gusuarios.php" class="nav-link <?php echo ($current_page == 'gusuarios.php') ? 'active' : ''; ?>">
-                <i class="fa-solid fa-user-shield"></i> Usuarios
+            <a href="../../views/admin/gempleados.php" class="nav-link <?php echo ($current_page == 'gempleados.php') ? 'active' : ''; ?>">
+                <i class="fa-solid fa-user-shield"></i> Empleados
             </a>
         </li>
+        <li class="nav-item">
+            <a href="../../views/admin/empresa.php" class="nav-link <?php echo ($current_page == 'empresa.php') ? 'active' : ''; ?>">
+                <i class="fa-solid fa-building"></i> Empresa
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="../../views/admin/parametrizacion.php" class="nav-link <?php echo ($current_page == 'parametrizacion.php') ? 'active' : ''; ?>">
+                <i class="fa-solid fa-building-columns"></i> Parametrización DIAN
+            </a>
+        </li>
+        <li class="nav-item px-3 mt-4 mb-2 text-white-50 small fw-bold text-uppercase" style="letter-spacing: 1px;">REPORTES</li>
         <li class="nav-item">
             <a href="../../views/admin/reportes.php" class="nav-link <?php echo ($current_page == 'reportes.php') ? 'active' : ''; ?>">
-                <i class="fa-solid fa-chart-line"></i> Reportes DIAN
+                <i class="fa-solid fa-chart-line"></i> Ventas y Rentabilidad
             </a>
         </li>
+        <li class="nav-item px-3 mt-4 mb-2 text-white-50 small fw-bold text-uppercase" style="letter-spacing: 1px;">AYUDA</li>
         <li class="nav-item">
-            <a href="../../views/admin/configuracion.php" class="nav-link <?php echo ($current_page == 'configuracion.php') ? 'active' : ''; ?>">
-                <i class="fa-solid fa-gears"></i> Configuración
+            <a href="../../views/admin/ayuda.php" class="nav-link <?php echo ($current_page == 'ayuda.php') ? 'active' : ''; ?>">
+                <i class="fa-solid fa-headset"></i> Ayuda
             </a>
         </li>
     </ul>

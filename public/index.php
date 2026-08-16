@@ -18,11 +18,11 @@
 
     <!-- Top Banner -->
     <div class="top-banner">
-        🚀 YA DISPONIBLE: FactuWeb PRO V1.0 <a href="login.html">Ingresar al Sistema &rarr;</a>
+        🚀 YA DISPONIBLE: FactuWeb PRO V1.0 <a href="../views/auth/login.php">Ingresar al Sistema &rarr;</a>
     </div>
 
     <!-- 1. Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top shadow-lg z-3">
         <div class="container">
             <a class="navbar-brand" href="#">
                 <!-- Nuevo Logo SVG -->
@@ -63,11 +63,8 @@
                     </p>
                     <div class="hero-cta-wrapper mt-4">
                         <div class="d-flex flex-column flex-sm-row gap-3">
-                            <a href="login.html" class="btn btn-super-cta">
+                            <a href="../views/auth/login.php" class="btn btn-super-cta">
                                 Comenzar Ahora <i class="fa-solid fa-circle-arrow-right ms-2"></i>
-                            </a>
-                            <a href="#demo" class="btn btn-outline-hero">
-                                <i class="fa-solid fa-circle-play me-2"></i> Ver Demostración
                             </a>
                         </div>
                         <div class="mt-3 text-white-50 small d-flex align-items-center gap-3">

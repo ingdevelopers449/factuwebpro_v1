@@ -55,7 +55,7 @@
         </li>
         <li class="nav-item px-3 mt-4 mb-2 text-white-50 small fw-bold text-uppercase" style="letter-spacing: 1px;">REPORTES</li>
         <li class="nav-item">
-            <a href="../../views/admin/reportes.php" class="nav-link <?php echo ($current_page == 'reportes.php') ? 'active' : ''; ?>">
+            <a href="../../views/admin/rentabilidad.php" class="nav-link <?php echo ($current_page == 'rentabilidad.php') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-chart-line"></i> Ventas y Rentabilidad
             </a>
         </li>

@@ -159,3 +159,40 @@ CREATE TABLE detalle_factura (
         REFERENCES productos(id_producto)
         ON DELETE RESTRICT
 );
+
+-- =========================================================================
+-- 🆕 PERSISTENCIA DE VENTA EN CURSO (BORRADOR)
+-- =========================================================================
+-- Guarda la venta que un usuario tiene sin finalizar, para que sobreviva
+-- incluso si cierra sesión o el equipo se apaga. Un usuario solo puede
+-- tener un borrador activo a la vez (UNIQUE en id_usuario).
+
+CREATE TABLE ventas_borrador (
+    id_borrador INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL UNIQUE,
+    id_cliente INT NULL,
+    fecha_actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (id_usuario)
+        REFERENCES usuarios(id_usuario)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (id_cliente)
+        REFERENCES clientes(id_cliente)
+        ON DELETE SET NULL
+);
+
+CREATE TABLE detalle_borrador (
+    id_detalle_borrador INT AUTO_INCREMENT PRIMARY KEY,
+    id_borrador INT NOT NULL,
+    id_producto INT NOT NULL,
+    cantidad INT NOT NULL,
+
+    FOREIGN KEY (id_borrador)
+        REFERENCES ventas_borrador(id_borrador)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (id_producto)
+        REFERENCES productos(id_producto)
+        ON DELETE RESTRICT
+);

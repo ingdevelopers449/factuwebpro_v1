@@ -3,6 +3,7 @@ session_start();
 require_once __DIR__ . '/../models/Factura.php';
 require_once __DIR__ . '/../models/Clientes.php';
 require_once __DIR__ . '/../models/Productos.php';
+require_once __DIR__ . '/../models/VentaBorrador.php';
 
 class FacturaController
 {
@@ -29,10 +30,15 @@ class FacturaController
             return strtolower($p['estado_producto']) === 'activo' && $p['stock_actual'] > 0;
         });
 
+        $id_usuario = $_SESSION['usuario']['id_usuario'] ?? null;
+        $borradorModel = new VentaBorrador();
+        $borrador = $id_usuario ? $borradorModel->obtenerBorrador($id_usuario) : null;
+
         echo json_encode([
             'success' => true,
             'clientes' => array_values($clientes),
-            'productos' => array_values($productosVenta)
+            'productos' => array_values($productosVenta),
+            'borrador' => $borrador
         ]);
         exit;
     }
@@ -65,6 +71,9 @@ class FacturaController
         $resultado = $facturaModel->crearFactura($id_empresa, $id_cliente, $id_usuario, $subtotal, $total_iva, $total_pagar, $detalles);
 
         if ($resultado['success']) {
+            $borradorModel = new VentaBorrador();
+            $borradorModel->limpiarBorrador($id_usuario);
+            
             $this->setAlert('success', '¡Factura Procesada!', 'Factura ' . $resultado['numero_factura'] . ' generada con éxito.');
         }
 
@@ -116,6 +125,32 @@ class FacturaController
         exit;
     }
 
+    public function guardar_borrador()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'error' => 'Método no permitido']);
+            exit;
+        }
+
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+
+        $id_usuario = $_SESSION['usuario']['id_usuario'] ?? null;
+        if (!$id_usuario) {
+            echo json_encode(['success' => false, 'error' => 'No autorizado']);
+            exit;
+        }
+
+        $id_cliente = !empty($data['id_cliente']) ? (int)$data['id_cliente'] : null;
+        $detalles = $data['detalles'] ?? [];
+
+        $borradorModel = new VentaBorrador();
+        $success = $borradorModel->guardarBorrador($id_usuario, $id_cliente, $detalles);
+
+        echo json_encode(['success' => $success]);
+        exit;
+    }
+
     public function run()
     {
         $action = $_GET['action'] ?? '';
@@ -128,6 +163,9 @@ class FacturaController
         } elseif ($action === 'crear_cliente_ajax') {
             header('Content-Type: application/json');
             $this->crear_cliente_ajax();
+        } elseif ($action === 'guardar_borrador') {
+            header('Content-Type: application/json');
+            $this->guardar_borrador();
         }
     }
 }

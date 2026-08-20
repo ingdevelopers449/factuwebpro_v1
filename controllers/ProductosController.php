@@ -18,18 +18,28 @@ class ProductosController
         $productoModel = new Producto();
         
         $termino = $_GET['q'] ?? '';
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        if ($page < 1) $page = 1;
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
         
         if (!empty($termino)) {
-            $productos = $productoModel->buscar($termino);
+            $total_records = $productoModel->contarBuscar($termino);
+            $productos = $productoModel->buscar($termino, $limit, $offset);
         } else {
-            $productos = $productoModel->obtenerTodos();
+            $total_records = $productoModel->contarTodos();
+            $productos = $productoModel->obtenerTodos($limit, $offset);
         }
 
+        $total_pages = ceil($total_records / $limit);
         $current_page = 'productos.php';
 
         return [
             'productos' => $productos,
-            'termino' => $termino
+            'termino' => $termino,
+            'page' => $page,
+            'total_pages' => $total_pages,
+            'total_records' => $total_records
         ];
     }
 
@@ -56,6 +66,27 @@ class ProductosController
             exit;
         }
 
+        // Lógica de carga de imagen
+        $imagen_url = null;
+        if (isset($_FILES['imagen_url']) && $_FILES['imagen_url']['error'] === UPLOAD_ERR_OK) {
+            $file_tmp = $_FILES['imagen_url']['tmp_name'];
+            $file_name = $_FILES['imagen_url']['name'];
+            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+            $allowed_exts = ['jpg', 'jpeg', 'png', 'webp'];
+            
+            if (in_array($file_ext, $allowed_exts)) {
+                $upload_dir = __DIR__ . '/../public/uploads/productos/';
+                $new_file_name = uniqid('prod_') . '.' . $file_ext;
+                $dest_path = $upload_dir . $new_file_name;
+                
+                if (move_uploaded_file($file_tmp, $dest_path)) {
+                    $imagen_url = 'public/uploads/productos/' . $new_file_name;
+                }
+            } else {
+                $this->setAlert('warning', 'Formato Inválido', 'La imagen debe ser JPG, PNG o WEBP. Se guardó el producto sin imagen.');
+            }
+        }
+
         $productoModel = new Producto();
 
         // Validar que el código de barras no exista (si se proporcionó uno)
@@ -70,11 +101,11 @@ class ProductosController
 
         if ($id_producto) {
             // Actualizar
-            $productoModel->actualizar($id_producto, $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria);
+            $productoModel->actualizar($id_producto, $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url);
             $this->setAlert('success', '¡Actualizado!', 'El producto se ha actualizado correctamente.');
         } else {
             // Insertar
-            $productoModel->insertar($codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria);
+            $productoModel->insertar($codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url);
             $this->setAlert('success', '¡Registrado!', 'El producto se ha registrado correctamente.');
         }
 

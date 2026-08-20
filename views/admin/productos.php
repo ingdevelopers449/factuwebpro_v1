@@ -53,7 +53,8 @@ require_once '../layouts/header.php';
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light text-secondary small text-uppercase">
                         <tr>
-                            <th class="ps-4 py-3 fw-semibold border-bottom-0">Código</th>
+                            <th class="ps-4 py-3 fw-semibold border-bottom-0">Img</th>
+                            <th class="py-3 fw-semibold border-bottom-0">Código</th>
                             <th class="py-3 fw-semibold border-bottom-0">Producto</th>
                             <th class="py-3 fw-semibold border-bottom-0">Compra</th>
                             <th class="py-3 fw-semibold border-bottom-0">Venta</th>
@@ -67,7 +68,16 @@ require_once '../layouts/header.php';
                         <?php if (count($productos) > 0): ?>
                             <?php foreach ($productos as $producto): ?>
                                 <tr>
-                                    <td class="ps-4 py-3 text-muted">
+                                    <td class="ps-4 py-2">
+                                        <?php if (!empty($producto['imagen_url'])): ?>
+                                            <img src="../../<?= htmlspecialchars($producto['imagen_url']) ?>" alt="Img" class="rounded object-fit-cover shadow-sm" width="40" height="40">
+                                        <?php else: ?>
+                                            <div class="bg-light text-secondary rounded d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;">
+                                                <i class="fa-solid fa-box"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="py-3 text-muted">
                                         <?= htmlspecialchars($producto['codigo_barras'] ?: '---') ?>
                                     </td>
                                     <td class="py-3 text-dark fw-medium">
@@ -134,6 +144,32 @@ require_once '../layouts/header.php';
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Paginación -->
+            <?php if ($total_pages > 1): ?>
+                <div class="card-footer bg-white border-top p-3 d-flex justify-content-center">
+                    <nav aria-label="Navegación de páginas">
+                        <ul class="pagination pagination-sm mb-0">
+                            <!-- Botón Anterior -->
+                            <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="productos.php?page=<?= $page - 1 ?><?= !empty($termino) ? '&q='.urlencode($termino) : '' ?>" tabindex="-1">Anterior</a>
+                            </li>
+                            
+                            <!-- Números de página -->
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
+                                    <a class="page-link" href="productos.php?page=<?= $i ?><?= !empty($termino) ? '&q='.urlencode($termino) : '' ?>"><?= $i ?></a>
+                                </li>
+                            <?php endfor; ?>
+                            
+                            <!-- Botón Siguiente -->
+                            <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="productos.php?page=<?= $page + 1 ?><?= !empty($termino) ? '&q='.urlencode($termino) : '' ?>">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -148,7 +184,7 @@ require_once '../layouts/header.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
-            <form action="../../controllers/ProductosController.php?action=guardar" method="POST" class="needs-validation" novalidate>
+            <form action="../../controllers/ProductosController.php?action=guardar" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                 <div class="modal-body p-4">
                     
                     <input type="hidden" name="id_producto" id="id_producto">
@@ -220,6 +256,20 @@ require_once '../layouts/header.php';
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label for="imagen_url" class="form-label fw-semibold text-secondary small">Imagen del Producto (Opcional)</label>
+                            
+                            <div class="d-flex align-items-center gap-3 mt-1">
+                                <div id="previewImagenContainer" class="d-none">
+                                    <img src="" id="previewImagen" class="rounded object-fit-cover shadow-sm border" width="60" height="60" alt="Vista previa">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <input class="form-control bg-light" type="file" id="imagen_url" name="imagen_url" accept="image/png, image/jpeg, image/webp">
+                                    <div class="form-text small">Formatos permitidos: JPG, PNG, WEBP. Si subes una nueva, reemplazará a la actual.</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -239,7 +289,7 @@ require_once '../layouts/header.php';
     let btnGuardar;
     
     // Inputs del formulario
-    let inputId, inputCodigo, inputNombre, inputCategoria, inputCompra, inputVenta, inputStock, inputIva, radioActivo, radioInactivo;
+    let inputId, inputCodigo, inputNombre, inputCategoria, inputCompra, inputVenta, inputStock, inputIva, radioActivo, radioInactivo, inputImagen;
 
     document.addEventListener('DOMContentLoaded', function () {
         // Inicialización
@@ -257,6 +307,7 @@ require_once '../layouts/header.php';
         inputIva = document.getElementById('tarifa_iva');
         radioActivo = document.getElementById('estadoActivo');
         radioInactivo = document.getElementById('estadoInactivo');
+        inputImagen = document.getElementById('imagen_url');
 
         // Validación de Formularios Bootstrap
         var forms = document.querySelectorAll('.needs-validation')
@@ -315,6 +366,10 @@ require_once '../layouts/header.php';
         inputStock.value = '0';
         inputIva.value = '19.00';
         radioActivo.checked = true;
+        inputImagen.value = '';
+        
+        document.getElementById('previewImagenContainer').classList.add('d-none');
+        document.getElementById('previewImagen').src = '';
         
         // Reset validaciones visuales
         document.querySelector('#productoModal form').classList.remove('was-validated');
@@ -334,6 +389,15 @@ require_once '../layouts/header.php';
         inputVenta.value = producto.precio_venta;
         inputStock.value = producto.stock_actual;
         inputIva.value = producto.tarifa_iva;
+        inputImagen.value = ''; // No se puede pre-cargar archivos por seguridad en navegadores
+        
+        if (producto.imagen_url) {
+            document.getElementById('previewImagen').src = '../../' + producto.imagen_url;
+            document.getElementById('previewImagenContainer').classList.remove('d-none');
+        } else {
+            document.getElementById('previewImagenContainer').classList.add('d-none');
+            document.getElementById('previewImagen').src = '';
+        }
         
         if(producto.estado_producto && producto.estado_producto.toLowerCase() === 'inactivo') {
             radioInactivo.checked = true;

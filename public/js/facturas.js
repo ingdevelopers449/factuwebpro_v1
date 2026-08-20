@@ -5,6 +5,23 @@ let carrito = [];
 let clienteSeleccionado = null;
 let productoEnFoco = null;
 
+let syncTimeout = null;
+
+function sincronizarBorrador() {
+    clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(() => {
+        const payload = {
+            id_cliente: clienteSeleccionado ? clienteSeleccionado.id_cliente : null,
+            detalles: carrito
+        };
+        fetch('../../controllers/FacturaController.php?action=guardar_borrador', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).catch(err => console.error('Error al autoguardar borrador', err));
+    }, 500); // 500ms debounce
+}
+
 // Formateador de moneda
 const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 
@@ -27,7 +44,17 @@ async function inicializarPOS() {
             catalogoProductos = data.productos;
             listaClientes = data.clientes;
             
-            actualizarCarrito();
+            if (data.borrador) {
+                if (data.borrador.id_cliente) {
+                    const c = listaClientes.find(x => x.id_cliente == data.borrador.id_cliente);
+                    if (c) seleccionarCliente(c, false);
+                }
+                if (data.borrador.detalles) {
+                    carrito = data.borrador.detalles;
+                }
+            }
+            
+            actualizarCarrito(false);
 
             // Mostrar interfaz
             loaderPOS.classList.add('d-none');
@@ -85,7 +112,7 @@ function configurarBuscadorCliente() {
     });
 }
 
-function seleccionarCliente(cliente) {
+function seleccionarCliente(cliente, sync = true) {
     clienteSeleccionado = cliente;
     clienteNombre.textContent = cliente.nombre_razon_social;
     clienteIdentificacion.textContent = `CC/NIT: ${cliente.identificacion}`;
@@ -94,14 +121,18 @@ function seleccionarCliente(cliente) {
     buscadorCliente.value = '';
     resultadosCliente.classList.add('d-none');
     btnRemoverCliente.style.display = 'inline-block';
+    
+    if (sync) sincronizarBorrador();
 }
 
-function quitarCliente() {
+function quitarCliente(sync = true) {
     clienteSeleccionado = null;
     clienteNombre.textContent = 'Consumidor Final';
     clienteIdentificacion.textContent = 'CC/NIT: ---';
     clienteTelefono.textContent = 'Tel: ---';
     btnRemoverCliente.style.display = 'none';
+    
+    if (sync) sincronizarBorrador();
 }
 
 window.abrirModalNuevoCliente = function() {
@@ -309,6 +340,10 @@ window.actualizarCarrito = function() {
     btnProcesar.dataset.subtotal = subtotalGlobal;
     btnProcesar.dataset.iva = ivaGlobal;
     btnProcesar.dataset.total = totalGlobal;
+    
+    if (arguments[0] !== false) {
+        sincronizarBorrador();
+    }
 }
 
 // 7. Lectura por Voz (RF-12)

@@ -63,7 +63,8 @@ class AuthController
 
         $_SESSION['usuario'] = [
             'id_usuario' => $usuario['id_usuario'],
-            'usuario' => $usuario['usuario'],
+            'id_empresa' => $usuario['id_empresa'],
+            'nombre' => $usuario['nombre'],
             'email' => $usuario['email'],
             'id_rol' => $usuario['id_rol']
         ];

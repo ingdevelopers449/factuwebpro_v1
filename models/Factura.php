@@ -3,7 +3,7 @@ require_once __DIR__ . '/../config/database.php';
 
 class Factura
 {
-    private $conn;
+    private \mysqli $conn;
 
     public function __construct()
     {
@@ -14,7 +14,7 @@ class Factura
     /**
      * Procesa la creación completa de una factura (Maestro-Detalle) usando Transacciones
      */
-    public function crearFactura($id_empresa, $id_cliente, $id_usuario, $subtotal, $total_iva, $total_pagar, $detalles)
+    public function crearFactura(int $id_empresa, ?int $id_cliente, ?int $id_usuario, float $subtotal, float $total_iva, float $total_pagar, array $detalles): array
     {
         // 1. Iniciar Transacción
         $this->conn->begin_transaction();

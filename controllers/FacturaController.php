@@ -72,6 +72,50 @@ class FacturaController
         exit;
     }
 
+    public function crear_cliente_ajax()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'error' => 'Método no permitido']);
+            exit;
+        }
+
+        $identificacion = $_POST['identificacion'] ?? '';
+        $nombre_razon_social = $_POST['nombre_razon_social'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $telefono = $_POST['telefono'] ?? '';
+        $direccion = $_POST['direccion'] ?? '';
+
+        if (empty($identificacion) || empty($nombre_razon_social)) {
+            echo json_encode(['success' => false, 'error' => 'La Identificación y el Nombre son requeridos.']);
+            exit;
+        }
+
+        $clienteModel = new Cliente();
+        $existe = $clienteModel->obtenerPorIdentificacion($identificacion);
+        
+        if ($existe) {
+            echo json_encode(['success' => false, 'error' => 'Ya existe un cliente con esta Identificación/NIT.']);
+            exit;
+        }
+
+        $id_insertado = $clienteModel->insertar($identificacion, $nombre_razon_social, $email, $direccion, $telefono);
+        
+        if ($id_insertado) {
+            echo json_encode([
+                'success' => true, 
+                'cliente' => [
+                    'id_cliente' => $id_insertado,
+                    'identificacion' => $identificacion,
+                    'nombre_razon_social' => $nombre_razon_social,
+                    'telefono' => $telefono
+                ]
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error al guardar el cliente en la base de datos.']);
+        }
+        exit;
+    }
+
     public function run()
     {
         $action = $_GET['action'] ?? '';
@@ -81,6 +125,9 @@ class FacturaController
             $this->procesar();
         } elseif ($action === 'init_pos') {
             $this->init_pos();
+        } elseif ($action === 'crear_cliente_ajax') {
+            header('Content-Type: application/json');
+            $this->crear_cliente_ajax();
         }
     }
 }

@@ -71,15 +71,39 @@ CREATE TABLE clientes (
     telefono VARCHAR(20)
 );
 
+-- =========================================================================
+-- 🆕 TABLA DE CATEGORÍAS (NUEVA)
+-- =========================================================================
+
+CREATE TABLE categorias (
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_categoria VARCHAR(100) NOT NULL UNIQUE,
+    descripcion TEXT,
+    estado ENUM('activa', 'inactiva') DEFAULT 'activa',
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- =========================================================================
+-- TABLA PRODUCTOS (ACTUALIZADA CON CATEGORÍA)
+-- =========================================================================
+
 CREATE TABLE productos (
     id_producto INT AUTO_INCREMENT PRIMARY KEY,
+    id_categoria INT,  -- 🆕 NUEVA COLUMNA
     codigo_barras VARCHAR(50) UNIQUE,
     nombre_producto VARCHAR(150) NOT NULL,
     precio_compra DECIMAL(12,2) NOT NULL,
     precio_venta DECIMAL(12,2) NOT NULL,
     stock_actual INT NOT NULL DEFAULT 0,
     estado_producto ENUM('activo', 'inactivo') DEFAULT 'activo',
-    tarifa_iva DECIMAL(5,2) DEFAULT 19.00
+    tarifa_iva DECIMAL(5,2) DEFAULT 19.00,
+    imagen_url VARCHAR(255) NULL,  -- 🆕 NUEVA COLUMNA: ruta/URL de la imagen del producto (no se guarda el archivo en la BD)
+
+    -- 🆕 NUEVA LLAVE FORÁNEA
+    FOREIGN KEY (id_categoria)
+        REFERENCES categorias(id_categoria)
+        ON DELETE SET NULL  -- Si se elimina la categoría, el producto queda sin categoría
 );
 
 CREATE TABLE facturas (

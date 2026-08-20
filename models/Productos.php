@@ -13,7 +13,7 @@ class Producto
 
     public function obtenerTodos()
     {
-        $query = 'SELECT id_producto, codigo_barras, nombre_producto, precio_compra, precio_venta, stock_actual, estado_producto, tarifa_iva FROM productos ORDER BY id_producto DESC';
+        $query = 'SELECT id_producto, codigo_barras, nombre_producto, precio_compra, precio_venta, stock_actual, estado_producto, tarifa_iva, id_categoria, imagen_url FROM productos ORDER BY id_producto DESC';
         $result = $this->conn->query($query);
         $productos = [];
         if ($result && $result->num_rows > 0) {
@@ -26,7 +26,7 @@ class Producto
 
     public function buscar($termino)
     {
-        $query = 'SELECT id_producto, codigo_barras, nombre_producto, precio_compra, precio_venta, stock_actual, estado_producto, tarifa_iva FROM productos WHERE codigo_barras LIKE ? OR nombre_producto LIKE ? ORDER BY id_producto DESC';
+        $query = 'SELECT id_producto, codigo_barras, nombre_producto, precio_compra, precio_venta, stock_actual, estado_producto, tarifa_iva, id_categoria, imagen_url FROM productos WHERE codigo_barras LIKE ? OR nombre_producto LIKE ? ORDER BY id_producto DESC';
         $stmt = $this->conn->prepare($query);
         $likeTermino = "%" . $termino . "%";
         $stmt->bind_param('ss', $likeTermino, $likeTermino);
@@ -65,20 +65,20 @@ class Producto
         return null;
     }
 
-    public function insertar($codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto)
+    public function insertar($codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url)
     {
-        $query = "INSERT INTO productos (codigo_barras, nombre_producto, precio_compra, precio_venta, stock_actual, tarifa_iva, estado_producto) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO productos (codigo_barras, nombre_producto, precio_compra, precio_venta, stock_actual, tarifa_iva, estado_producto, id_categoria, imagen_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param('ssddids', $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto);
+        $stmt->bind_param('ssddids', $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url);
         $stmt->execute();
         return $stmt->insert_id;
     }
 
-    public function actualizar($id_producto, $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto)
+    public function actualizar($id_producto, $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url)
     {
-        $query = "UPDATE productos SET codigo_barras = ?, nombre_producto = ?, precio_compra = ?, precio_venta = ?, stock_actual = ?, tarifa_iva = ?, estado_producto = ? WHERE id_producto = ?";
+        $query = "UPDATE productos SET codigo_barras = ?, nombre_producto = ?, precio_compra = ?, precio_venta = ?, stock_actual = ?, tarifa_iva = ?, estado_producto = ?, id_categoria = ?, imagen_url = ? WHERE id_producto = ?";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param('ssddidsi', $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_producto);
+        $stmt->bind_param('ssddidsi', $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url, $id_producto);
         $stmt->execute();
         return $stmt->affected_rows;
     }

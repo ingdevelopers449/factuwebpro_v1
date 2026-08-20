@@ -44,7 +44,7 @@ class Usuario
 
     public function obtenerPorEmail(string $email)
     {
-        $query = 'SELECT id_usuario, email, password_hash, id_rol, estado FROM usuarios WHERE email = ?';
+        $query = 'SELECT id_usuario, id_empresa, nombre, email, password_hash, id_rol, estado FROM usuarios WHERE email = ?';
         $stmt = $this->conn->prepare($query);
         if ($stmt) {
             $stmt->bind_param('s', $email);

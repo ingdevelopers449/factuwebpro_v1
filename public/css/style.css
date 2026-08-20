@@ -601,3 +601,22 @@ footer {
     .kpi-card { break-inside: avoid; border: 1px solid #ddd !important; }
     h2 { color: black !important; }
 }
+
+/* --- Módulo POS (Punto de Venta) --- */
+.pos-section-title {
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    color: #6b7280;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+}
+
+.client-selected-card {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}

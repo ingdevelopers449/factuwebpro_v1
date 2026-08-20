@@ -11,6 +11,21 @@ class Factura
         $this->conn = $conn;
     }
 
+    public function obtenerSiguienteNumero(int $id_empresa): string
+    {
+        $queryRes = "SELECT prefijo, contador_actual FROM resolucion_dian WHERE id_empresa = ? AND estado = 'activa' LIMIT 1";
+        $stmtRes = $this->conn->prepare($queryRes);
+        if ($stmtRes) {
+            $stmtRes->bind_param('i', $id_empresa);
+            $stmtRes->execute();
+            $resultRes = $stmtRes->get_result();
+            if ($row = $resultRes->fetch_assoc()) {
+                return $row['prefijo'] . str_pad($row['contador_actual'], 4, '0', STR_PAD_LEFT);
+            }
+        }
+        return "N/A (Sin Resolución)";
+    }
+
     /**
      * Procesa la creación completa de una factura (Maestro-Detalle) usando Transacciones
      */

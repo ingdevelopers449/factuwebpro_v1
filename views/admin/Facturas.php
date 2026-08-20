@@ -1,40 +1,42 @@
 <?php 
-// Vista de Facturación POS - Rediseño Wireframe
+// Vista de Facturación POS
 $current_page = 'facturas.php';
 require_once '../layouts/header.php'; 
+require_once '../../models/Factura.php';
+
+$facturaModel = new Factura();
+$id_empresa = $_SESSION['usuario']['id_empresa'] ?? 1;
+$siguiente_numero = $facturaModel->obtenerSiguienteNumero($id_empresa);
 ?>
 
-<!-- Estilos específicos para acercarse al wireframe -->
 <style>
-    .pos-section-title {
-        font-family: var(--font-heading);
-        text-transform: uppercase;
-        font-size: 0.9rem;
-        letter-spacing: 1px;
-        color: #6b7280;
-        margin-bottom: 1rem;
-        border-bottom: 2px solid #e5e7eb;
-        padding-bottom: 0.5rem;
+    /* Convertir el área principal en un contenedor sin scroll para que el POS se adapte a la pantalla */
+    .app-content {
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
     }
-    .client-selected-card {
-        background: #f8fafc;
-        border: 1px dashed #cbd5e1;
-        border-radius: 0.5rem;
-        padding: 1rem;
+    
+    /* El contenedor del carrito será el único que tenga scroll */
+    #tablaCarrito_wrapper {
+        min-height: 150px;
     }
 </style>
 
-<div class="container-fluid py-4 h-100 d-flex flex-column" style="max-width: 1400px;">
+<div class="container-fluid d-flex flex-column flex-grow-1 p-0" style="max-width: 1400px; width: 100%;">
     
-    <!-- Encabezado POS -->
-    <div class="d-flex justify-content-between align-items-end mb-3">
+    <!-- Encabezado POS (Premium UI) -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 glass-header p-4 rounded-4 shadow-sm">
         <div>
-            <h2 class="h4 fw-bold text-dark mb-0 text-uppercase" style="font-family: var(--font-heading);">
-                FACTURACIÓN POS <span class="text-muted fs-6 ms-2">| Nueva venta</span>
+            <h2 class="h3 fw-bold text-dark mb-1 text-uppercase" style="font-family: var(--font-heading);">
+                <i class="fa-solid fa-cash-register me-2" style="color: #f59e0b;"></i> <span style="color: #12102f;">Facturación POS</span>
             </h2>
+            <p class="text-muted small mb-0">Punto de venta y registro de nuevas transacciones</p>
         </div>
         <div>
-            <span class="badge bg-primary rounded-pill px-3 py-2">Venta # Nueva</span>
+            <span class="badge rounded-pill px-4 py-2 fs-6 shadow-sm text-white" style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); border: 1px solid rgba(255,255,255,0.2);">
+                <i class="fa-solid fa-hashtag me-1 text-white-50"></i> <?= htmlspecialchars($siguiente_numero) ?>
+            </span>
         </div>
     </div>
 

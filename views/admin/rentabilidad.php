@@ -18,7 +18,7 @@ require_once '../layouts/header.php';
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 glass-header p-4 rounded-4 shadow-sm">
         <div>
             <h2 class="h3 fw-bold text-dark mb-1 text-uppercase" style="font-family: var(--font-heading);">
-                <i class="fa-solid fa-chart-line me-2 text-primary"></i> <span style="color: #2563eb;">Ventas y Rentabilidad</span>
+                <i class="fa-solid fa-chart-line me-2" style="color: #f59e0b;"></i> <span style="color: #12102f;">Ventas y Rentabilidad</span>
             </h2>
             <p class="text-muted small mb-0">Análisis financiero y márgenes de utilidad del negocio (Sólo Administrador)</p>
         </div>

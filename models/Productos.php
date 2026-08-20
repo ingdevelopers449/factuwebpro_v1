@@ -3,7 +3,7 @@ require_once __DIR__ . '/../config/database.php';
 
 class Producto
 {
-    private $conn;
+    private mysqli $conn;
 
     public function __construct()
     {
@@ -11,9 +11,9 @@ class Producto
         $this->conn = $conn;
     }
 
-    public function obtenerTodos()
+    public function obtenerTodos(): array
     {
-        $query = 'SELECT id_producto, codigo_barras, nombre_producto, precio_compra, precio_venta, stock_actual, estado_producto, tarifa_iva, id_categoria, imagen_url FROM productos ORDER BY id_producto DESC';
+        $query = "SELECT p.*, c.nombre_categoria FROM productos p LEFT JOIN categorias c ON p.id_categoria = c.id_categoria ORDER BY p.nombre_producto ASC";
         $result = $this->conn->query($query);
         $productos = [];
         if ($result && $result->num_rows > 0) {
@@ -24,71 +24,75 @@ class Producto
         return $productos;
     }
 
-    public function buscar($termino)
+    public function buscar(string $termino): array
     {
-        $query = 'SELECT id_producto, codigo_barras, nombre_producto, precio_compra, precio_venta, stock_actual, estado_producto, tarifa_iva, id_categoria, imagen_url FROM productos WHERE codigo_barras LIKE ? OR nombre_producto LIKE ? ORDER BY id_producto DESC';
+        $termino_like = '%' . $termino . '%';
+        $query = "SELECT p.*, c.nombre_categoria FROM productos p LEFT JOIN categorias c ON p.id_categoria = c.id_categoria WHERE p.nombre_producto LIKE ? OR p.codigo_barras LIKE ? ORDER BY p.nombre_producto ASC";
         $stmt = $this->conn->prepare($query);
-        $likeTermino = "%" . $termino . "%";
-        $stmt->bind_param('ss', $likeTermino, $likeTermino);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        $productos = [];
-        if ($result && $result->num_rows > 0) {
+        if ($stmt) {
+            $stmt->bind_param('ss', $termino_like, $termino_like);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $productos = [];
             while ($row = $result->fetch_assoc()) {
                 $productos[] = $row;
             }
+            return $productos;
         }
-        return $productos;
+        return [];
     }
 
-    public function obtenerPorCodigo($codigo_barras, $exclude_id = null)
+    public function existeCodigo(string $codigo_barras, ?int $id_excluir = null): bool
     {
-        if (empty($codigo_barras)) return null;
+        if (empty($codigo_barras)) return false;
+        
+        $query = "SELECT id_producto FROM productos WHERE codigo_barras = ?";
+        $params = [$codigo_barras];
+        $types = "s";
 
-        if ($exclude_id) {
-            $query = 'SELECT id_producto FROM productos WHERE codigo_barras = ? AND id_producto != ?';
-            $stmt = $this->conn->prepare($query);
-            $stmt->bind_param('si', $codigo_barras, $exclude_id);
-        } else {
-            $query = 'SELECT id_producto FROM productos WHERE codigo_barras = ?';
-            $stmt = $this->conn->prepare($query);
-            $stmt->bind_param('s', $codigo_barras);
+        if ($id_excluir) {
+            $query .= " AND id_producto != ?";
+            $params[] = $id_excluir;
+            $types .= "i";
         }
-        
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result && $result->num_rows > 0) {
-            return $result->fetch_assoc();
+
+        $stmt = $this->conn->prepare($query);
+        if ($stmt) {
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $stmt->store_result();
+            return $stmt->num_rows > 0;
         }
-        return null;
+        return false;
     }
 
-    public function insertar($codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url)
+    public function insertar(?string $codigo_barras, string $nombre_producto, float $precio_compra, float $precio_venta, int $stock_actual, float $tarifa_iva, string $estado_producto, ?int $id_categoria, ?string $imagen_url = null)
     {
         $query = "INSERT INTO productos (codigo_barras, nombre_producto, precio_compra, precio_venta, stock_actual, tarifa_iva, estado_producto, id_categoria, imagen_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param('ssddids', $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url);
-        $stmt->execute();
-        return $stmt->insert_id;
+        if ($stmt) {
+            $stmt->bind_param('ssddidsss', $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url);
+            return $stmt->execute() ? $stmt->insert_id : false;
+        }
+        return false;
     }
 
-    public function actualizar($id_producto, $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url)
+    public function actualizar(int $id_producto, ?string $codigo_barras, string $nombre_producto, float $precio_compra, float $precio_venta, int $stock_actual, float $tarifa_iva, string $estado_producto, ?int $id_categoria, ?string $imagen_url = null): bool
     {
-        $query = "UPDATE productos SET codigo_barras = ?, nombre_producto = ?, precio_compra = ?, precio_venta = ?, stock_actual = ?, tarifa_iva = ?, estado_producto = ?, id_categoria = ?, imagen_url = ? WHERE id_producto = ?";
+        $query = "UPDATE productos SET codigo_barras=?, nombre_producto=?, precio_compra=?, precio_venta=?, stock_actual=?, tarifa_iva=?, estado_producto=?, id_categoria=?, imagen_url=? WHERE id_producto=?";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param('ssddidsi', $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url, $id_producto);
-        $stmt->execute();
-        return $stmt->affected_rows;
+        if ($stmt) {
+            $stmt->bind_param('ssddidsssi', $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria, $imagen_url, $id_producto);
+            return $stmt->execute();
+        }
+        return false;
     }
-    
-    public function cambiarEstado($id_producto, $nuevo_estado)
+
+    public function alternarEstado(int $id_producto, string $nuevo_estado): bool
     {
         $query = "UPDATE productos SET estado_producto = ? WHERE id_producto = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param('si', $nuevo_estado, $id_producto);
-        $stmt->execute();
-        return $stmt->affected_rows;
+        return $stmt->execute();
     }
 }

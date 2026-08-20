@@ -5,6 +5,10 @@ require_once '../../controllers/ProductosController.php';
 $controller = new ProductosController();
 extract($controller->index());
 
+require_once '../../models/Categoria.php';
+$categoriaModel = new Categoria();
+$categoriasActivas = $categoriaModel->obtenerActivas();
+
 require_once '../layouts/header.php'; 
 ?>
 
@@ -155,10 +159,20 @@ require_once '../layouts/header.php';
                             <input type="text" class="form-control bg-light" id="codigo_barras" name="codigo_barras">
                         </div>
 
-                        <div class="col-md-8 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label for="nombre_producto" class="form-label fw-semibold text-secondary small">Nombre del producto *</label>
                             <input type="text" class="form-control bg-light" id="nombre_producto" name="nombre_producto" required>
                             <div class="invalid-feedback">El nombre es obligatorio.</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="id_categoria" class="form-label fw-semibold text-secondary small">Categoría</label>
+                            <select class="form-select bg-light" id="id_categoria" name="id_categoria">
+                                <option value="">-- Sin categoría --</option>
+                                <?php foreach($categoriasActivas as $cat): ?>
+                                    <option value="<?= $cat['id_categoria'] ?>"><?= htmlspecialchars($cat['nombre_categoria']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
 
                         <div class="col-md-4 mb-3">
@@ -225,7 +239,7 @@ require_once '../layouts/header.php';
     let btnGuardar;
     
     // Inputs del formulario
-    let inputId, inputCodigo, inputNombre, inputCompra, inputVenta, inputStock, inputIva, radioActivo, radioInactivo;
+    let inputId, inputCodigo, inputNombre, inputCategoria, inputCompra, inputVenta, inputStock, inputIva, radioActivo, radioInactivo;
 
     document.addEventListener('DOMContentLoaded', function () {
         // Inicialización
@@ -236,6 +250,7 @@ require_once '../layouts/header.php';
         inputId = document.getElementById('id_producto');
         inputCodigo = document.getElementById('codigo_barras');
         inputNombre = document.getElementById('nombre_producto');
+        inputCategoria = document.getElementById('id_categoria');
         inputCompra = document.getElementById('precio_compra');
         inputVenta = document.getElementById('precio_venta');
         inputStock = document.getElementById('stock_actual');
@@ -294,6 +309,7 @@ require_once '../layouts/header.php';
         inputId.value = '';
         inputCodigo.value = '';
         inputNombre.value = '';
+        inputCategoria.value = '';
         inputCompra.value = '';
         inputVenta.value = '';
         inputStock.value = '0';
@@ -313,6 +329,7 @@ require_once '../layouts/header.php';
         inputId.value = producto.id_producto;
         inputCodigo.value = producto.codigo_barras || '';
         inputNombre.value = producto.nombre_producto;
+        inputCategoria.value = producto.id_categoria || '';
         inputCompra.value = producto.precio_compra;
         inputVenta.value = producto.precio_venta;
         inputStock.value = producto.stock_actual;

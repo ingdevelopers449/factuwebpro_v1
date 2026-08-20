@@ -72,34 +72,38 @@ class Categoria
         return false;
     }
 
-    public function insertar(string $nombre_categoria, string $descripcion, string $estado)
+    public function insertar(string $nombre_categoria, string $descripcion, string $estado, string $fecha_creacion = 'now', string $fecha_actualizacion = 'now')
     {
-        $query = "INSERT INTO categorias (nombre_categoria, descripcion, estado) VALUES (?, ?, ?)";
+        $query = "INSERT INTO categorias (nombre_categoria, descripcion, estado, fecha_creacion, fecha_actualizacion) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
         if ($stmt) {
-            $stmt->bind_param('sss', $nombre_categoria, $descripcion, $estado);
+            $fc = ($fecha_creacion === 'now' || empty($fecha_creacion)) ? date('Y-m-d H:i:s') : $fecha_creacion;
+            $fa = ($fecha_actualizacion === 'now' || empty($fecha_actualizacion)) ? date('Y-m-d H:i:s') : $fecha_actualizacion;
+            $stmt->bind_param('sssss', $nombre_categoria, $descripcion, $estado, $fc, $fa);
             return $stmt->execute() ? $stmt->insert_id : false;
         }
         return false;
     }
 
-    public function actualizar(int $id_categoria, string $nombre_categoria, string $descripcion, string $estado)
+    public function actualizar(int $id_categoria, string $nombre_categoria, string $descripcion, string $estado, string $fecha_creacion = 'now', string $fecha_actualizacion = 'now')
     {
-        $query = "UPDATE categorias SET nombre_categoria = ?, descripcion = ?, estado = ? WHERE id_categoria = ?";
+        $query = "UPDATE categorias SET nombre_categoria = ?, descripcion = ?, estado = ?, fecha_actualizacion = ? WHERE id_categoria = ?";
         $stmt = $this->conn->prepare($query);
         if ($stmt) {
-            $stmt->bind_param('sssi', $nombre_categoria, $descripcion, $estado, $id_categoria);
+            $fa = ($fecha_actualizacion === 'now' || empty($fecha_actualizacion)) ? date('Y-m-d H:i:s') : $fecha_actualizacion;
+            $stmt->bind_param('ssssi', $nombre_categoria, $descripcion, $estado, $fa, $id_categoria);
             return $stmt->execute();
         }
         return false;
     }
 
-    public function cambiarEstado(int $id_categoria, string $nuevo_estado)
+    public function cambiarEstado(int $id_categoria, string $nuevo_estado, string $fecha_actualizacion = 'now')
     {
-        $query = "UPDATE categorias SET estado = ? WHERE id_categoria = ?";
+        $query = "UPDATE categorias SET estado = ?, fecha_actualizacion = ? WHERE id_categoria = ?";
         $stmt = $this->conn->prepare($query);
         if ($stmt) {
-            $stmt->bind_param('si', $nuevo_estado, $id_categoria);
+            $fa = ($fecha_actualizacion === 'now' || empty($fecha_actualizacion)) ? date('Y-m-d H:i:s') : $fecha_actualizacion;
+            $stmt->bind_param('ssi', $nuevo_estado, $fa, $id_categoria);
             return $stmt->execute();
         }
         return false;

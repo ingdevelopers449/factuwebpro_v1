@@ -48,6 +48,7 @@ class ProductosController
         $stock_actual = !empty($_POST['stock_actual']) ? (int)$_POST['stock_actual'] : 0;
         $tarifa_iva = !empty($_POST['tarifa_iva']) ? (float)$_POST['tarifa_iva'] : 19.00;
         $estado_producto = $_POST['estado_producto'] ?? 'activo';
+        $id_categoria = !empty($_POST['id_categoria']) ? (int)$_POST['id_categoria'] : null;
 
         if (empty($nombre_producto) || empty($precio_compra) || empty($precio_venta)) {
             $this->setAlert('error', 'Campos Obligatorios', 'El Nombre del producto y los Precios son requeridos.');
@@ -59,7 +60,7 @@ class ProductosController
 
         // Validar que el código de barras no exista (si se proporcionó uno)
         if (!empty($codigo_barras)) {
-            $existe = $productoModel->obtenerPorCodigo($codigo_barras, $id_producto);
+            $existe = $productoModel->existeCodigo($codigo_barras, $id_producto);
             if ($existe) {
                 $this->setAlert('error', 'Error', 'Ya existe un producto registrado con ese Código de barras.');
                 header('Location: ../views/admin/productos.php');
@@ -69,11 +70,11 @@ class ProductosController
 
         if ($id_producto) {
             // Actualizar
-            $productoModel->actualizar($id_producto, $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto);
+            $productoModel->actualizar($id_producto, $codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria);
             $this->setAlert('success', '¡Actualizado!', 'El producto se ha actualizado correctamente.');
         } else {
             // Insertar
-            $productoModel->insertar($codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto);
+            $productoModel->insertar($codigo_barras, $nombre_producto, $precio_compra, $precio_venta, $stock_actual, $tarifa_iva, $estado_producto, $id_categoria);
             $this->setAlert('success', '¡Registrado!', 'El producto se ha registrado correctamente.');
         }
 
@@ -89,7 +90,7 @@ class ProductosController
         if ($id_producto) {
             $nuevo_estado = ($estado_actual === 'activo') ? 'inactivo' : 'activo';
             $productoModel = new Producto();
-            $productoModel->cambiarEstado($id_producto, $nuevo_estado);
+            $productoModel->alternarEstado($id_producto, $nuevo_estado);
             
             if ($nuevo_estado === 'inactivo') {
                 $this->setAlert('success', '¡Desactivado!', 'El producto ha sido desactivado del catálogo.');

@@ -133,10 +133,14 @@ require_once '../layouts/header.php';
 
                     <div class="mb-3" id="divEstado">
                         <label class="form-label fw-semibold text-secondary small">Estado</label>
-                        <select class="form-select bg-light" name="estado" id="form_estado">
-                            <option value="activa">Activa</option>
-                            <option value="inactiva">Inactiva</option>
-                        </select>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="estado" id="estadoActiva" value="activa" checked>
+                            <label class="form-check-label" for="estadoActiva">Activa</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="estado" id="estadoInactiva" value="inactiva">
+                            <label class="form-check-label" for="estadoInactiva">Inactiva</label>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer border-top bg-light px-4 py-3 rounded-bottom-4">
@@ -183,8 +187,8 @@ require_once '../layouts/header.php';
         document.getElementById('form_id_categoria').value = '0';
         document.getElementById('form_nombre_categoria').value = '';
         document.getElementById('form_descripcion').value = '';
-        document.getElementById('form_estado').value = 'activa';
-        document.getElementById('divEstado').style.display = 'none'; // Ocultar estado al crear
+        document.getElementById('estadoActiva').checked = true;
+        document.getElementById('divEstado').style.display = 'block'; // Mostrar estado al crear
         modalCategoriaObj.show();
     }
 
@@ -193,7 +197,13 @@ require_once '../layouts/header.php';
         document.getElementById('form_id_categoria').value = cat.id_categoria;
         document.getElementById('form_nombre_categoria').value = cat.nombre_categoria;
         document.getElementById('form_descripcion').value = cat.descripcion;
-        document.getElementById('form_estado').value = cat.estado;
+        
+        if (cat.estado === 'activa') {
+            document.getElementById('estadoActiva').checked = true;
+        } else {
+            document.getElementById('estadoInactiva').checked = true;
+        }
+
         document.getElementById('divEstado').style.display = 'block'; // Mostrar estado al editar
         modalCategoriaObj.show();
     }

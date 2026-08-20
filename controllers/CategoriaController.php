@@ -32,6 +32,8 @@ class CategoriaController
         $nombre = trim($_POST['nombre_categoria'] ?? '');
         $descripcion = trim($_POST['descripcion'] ?? '');
         $estado = $_POST['estado'] ?? 'activa';
+        $fecha_creacion = $_POST['fecha_creacion'] ?? 'now';
+        $fecha_actualizacion = $_POST['fecha_actualizacion'] ?? 'now';
 
         if (empty($nombre)) {
             $this->setAlert('warning', 'Validación', 'El nombre de la categoría es obligatorio.');
@@ -50,7 +52,7 @@ class CategoriaController
 
         if ($id_categoria > 0) {
             // Actualizar
-            $resultado = $modelo->actualizar($id_categoria, $nombre, $descripcion, $estado);
+            $resultado = $modelo->actualizar($id_categoria, $nombre, $descripcion, $estado, $fecha_creacion, $fecha_actualizacion);
             if ($resultado) {
                 $this->setAlert('success', '¡Actualizado!', 'La categoría se actualizó correctamente.');
             } else {
@@ -58,7 +60,7 @@ class CategoriaController
             }
         } else {
             // Insertar
-            $resultado = $modelo->insertar($nombre, $descripcion, $estado);
+            $resultado = $modelo->insertar($nombre, $descripcion, $estado, $fecha_creacion, $fecha_actualizacion);
             if ($resultado) {
                 $this->setAlert('success', '¡Guardado!', 'La categoría se creó correctamente.');
             } else {
@@ -80,9 +82,10 @@ class CategoriaController
         $id_categoria = (int)$_POST['id_categoria'];
         $estado_actual = $_POST['estado_actual'];
         $nuevo_estado = ($estado_actual === 'activa') ? 'inactiva' : 'activa';
+        $fecha_actualizacion = $_POST['fecha_actualizacion'] ?? 'now';
 
         $modelo = new Categoria();
-        $resultado = $modelo->cambiarEstado($id_categoria, $nuevo_estado);
+        $resultado = $modelo->cambiarEstado($id_categoria, $nuevo_estado, $fecha_actualizacion);
 
         if ($resultado) {
             $this->setAlert('success', 'Estado modificado', 'El estado de la categoría se actualizó.');

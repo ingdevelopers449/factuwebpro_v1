@@ -149,8 +149,11 @@ $siguiente_numero = $facturaModel->obtenerSiguienteNumero($id_empresa);
                         </div>
                         
                         <div>
-                            <button class="btn btn-outline-secondary w-100 py-3 mb-3 rounded-3 fw-bold d-flex justify-content-center align-items-center" id="btnLeerFactura">
+                            <button class="btn btn-outline-secondary w-100 py-3 mb-2 rounded-3 fw-bold d-flex justify-content-center align-items-center" id="btnLeerFactura">
                                 <i class="fa-solid fa-volume-high me-2"></i> Leer factura
+                            </button>
+                            <button class="btn btn-outline-danger w-100 py-2 mb-3 rounded-3 fw-bold d-flex justify-content-center align-items-center" id="btnDescartarVenta">
+                                <i class="fa-solid fa-trash-can me-2"></i> Descartar venta
                             </button>
                             <button class="btn btn-primary w-100 py-3 rounded-3 shadow fw-bold fs-5 d-flex justify-content-center align-items-center" id="btnProcesar">
                                 CONFIRMAR VENTA

@@ -55,11 +55,18 @@ class Factura
                 throw new Exception("La resolución DIAN ha alcanzado su rango final. No se puede facturar.");
             }
 
-            // 3. Insertar Factura Maestra
-            $queryFac = "INSERT INTO facturas (id_empresa, id_resolucion, prefijo_resolucion, consecutivo, id_cliente, id_usuario, subtotal, total_iva, total_pagar) 
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            // Simular Integración DIAN (Generación de CUFE y QR)
+            $cufe_data = $id_empresa . $prefijo_resolucion . $consecutivo . $total_pagar . date('YmdHis');
+            $cufe = hash('sha384', $cufe_data); // Simulamos el hash real de la DIAN
+            $codigo_qr = "https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=" . $cufe;
+            $estado_dian = 'aceptada';
+            $fecha_validacion_dian = date('Y-m-d H:i:s');
+
+            // 3. Insertar Factura Maestra con Datos DIAN
+            $queryFac = "INSERT INTO facturas (id_empresa, id_resolucion, prefijo_resolucion, consecutivo, id_cliente, id_usuario, subtotal, total_iva, total_pagar, cufe, codigo_qr, estado_dian, fecha_validacion_dian) 
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmtFac = $this->conn->prepare($queryFac);
-            $stmtFac->bind_param('iisiiiddd', $id_empresa, $id_resolucion, $prefijo_resolucion, $consecutivo, $id_cliente, $id_usuario, $subtotal, $total_iva, $total_pagar);
+            $stmtFac->bind_param('iisiiidddssss', $id_empresa, $id_resolucion, $prefijo_resolucion, $consecutivo, $id_cliente, $id_usuario, $subtotal, $total_iva, $total_pagar, $cufe, $codigo_qr, $estado_dian, $fecha_validacion_dian);
             $stmtFac->execute();
             $id_factura = $stmtFac->insert_id;
 
@@ -133,6 +140,7 @@ class Factura
                    e.nit as empresa_nit,
                    e.direccion as empresa_direccion,
                    e.telefono as empresa_telefono,
+                   e.logo_url as empresa_logo,
                    u.nombre as vendedor
             FROM facturas f
             LEFT JOIN clientes c ON f.id_cliente = c.id_cliente
@@ -170,6 +178,46 @@ class Factura
                 $detalles[] = $row;
             }
             return $detalles;
+        }
+        return [];
+    }
+
+    public function obtenerVentasPorUsuario(int $id_usuario, string $fecha_inicio = null, string $fecha_fin = null): array
+    {
+        $query = "
+            SELECT f.id_factura, f.prefijo_resolucion, f.consecutivo, f.fecha_emision, f.total_pagar, 
+                   c.nombre_razon_social as cliente_nombre, c.identificacion as cliente_identificacion
+            FROM facturas f
+            LEFT JOIN clientes c ON f.id_cliente = c.id_cliente
+            WHERE f.id_usuario = ?
+        ";
+        
+        $params = [$id_usuario];
+        $types = "i";
+
+        if ($fecha_inicio && $fecha_fin) {
+            $query .= " AND DATE(f.fecha_emision) BETWEEN ? AND ?";
+            $params[] = $fecha_inicio;
+            $params[] = $fecha_fin;
+            $types .= "ss";
+        } elseif ($fecha_inicio) {
+            $query .= " AND DATE(f.fecha_emision) >= ?";
+            $params[] = $fecha_inicio;
+            $types .= "s";
+        }
+
+        $query .= " ORDER BY f.fecha_emision DESC";
+
+        $stmt = $this->conn->prepare($query);
+        if ($stmt) {
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $ventas = [];
+            while ($row = $result->fetch_assoc()) {
+                $ventas[] = $row;
+            }
+            return $ventas;
         }
         return [];
     }

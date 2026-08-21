@@ -155,6 +155,26 @@ class FacturaController
         exit;
     }
 
+    public function limpiar_borrador()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'error' => 'Método no permitido']);
+            exit;
+        }
+
+        $id_usuario = $_SESSION['usuario']['id_usuario'] ?? null;
+        if (!$id_usuario) {
+            echo json_encode(['success' => false, 'error' => 'No autorizado']);
+            exit;
+        }
+
+        $borradorModel = new VentaBorrador();
+        $success = $borradorModel->limpiarBorrador($id_usuario);
+
+        echo json_encode(['success' => $success]);
+        exit;
+    }
+
     public function imprimir()
     {
         $id_factura = $_GET['id'] ?? 0;
@@ -196,6 +216,9 @@ class FacturaController
         } elseif ($action === 'guardar_borrador') {
             header('Content-Type: application/json');
             $this->guardar_borrador();
+        } elseif ($action === 'limpiar_borrador') {
+            header('Content-Type: application/json');
+            $this->limpiar_borrador();
         } elseif ($action === 'imprimir') {
             $this->imprimir();
         }

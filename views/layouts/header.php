@@ -7,6 +7,22 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: ../../views/auth/login.php');
     exit;
 }
+
+// Control de Inactividad (10 minutos = 600 segundos)
+$timeout_duration = 600;
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeout_duration) {
+    session_unset();
+    session_destroy();
+    session_start();
+    $_SESSION['alert'] = [
+        'icon' => 'warning',
+        'title' => 'Sesión expirada',
+        'text' => 'Su sesión se cerró automáticamente por seguridad tras 10 minutos de inactividad.'
+    ];
+    header('Location: ../../views/auth/login.php');
+    exit;
+}
+$_SESSION['last_activity'] = time();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -26,8 +42,14 @@ if (!isset($_SESSION['usuario'])) {
 <body>
     <div class="app-container d-flex">
         
-        <!-- Sidebar Admin -->
-        <?php include __DIR__ . '/sidebaradmin.php'; ?>
+        <!-- Sidebar -->
+        <?php 
+        if (isset($_SESSION['usuario']['id_rol']) && $_SESSION['usuario']['id_rol'] == '2') {
+            include __DIR__ . '/sidebarseller.php'; 
+        } else {
+            include __DIR__ . '/sidebaradmin.php'; 
+        }
+        ?>
 
         <!-- Main Wrapper -->
         <div class="app-main flex-grow-1 d-flex flex-column overflow-hidden">

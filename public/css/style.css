@@ -665,3 +665,30 @@ body.ticket-pos {
     .ticket-pos .no-print { display: none !important; }
     body.ticket-pos { margin: 0; padding: 0; }
 }
+
+/* --- Módulo de Ayuda y Soporte (HU-011) --- */
+.btn-help-float {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #12102f 0%, #1e1b4b 100%);
+    color: white;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    z-index: 1050;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+}
+.btn-help-float:hover {
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 15px 30px rgba(18, 16, 47, 0.5) !important;
+    color: #f59e0b; /* Icono cambia a naranja corporativo al pasar el mouse */
+}
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #12102f 0%, #1e1b4b 100%);
+}

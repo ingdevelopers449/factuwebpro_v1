@@ -59,12 +59,6 @@
                 <i class="fa-solid fa-chart-line"></i> Ventas y Rentabilidad
             </a>
         </li>
-        <li class="nav-item px-3 mt-4 mb-2 text-white-50 small fw-bold text-uppercase" style="letter-spacing: 1px;">AYUDA</li>
-        <li class="nav-item">
-            <a href="../../views/admin/ayuda.php" class="nav-link <?php echo ($current_page == 'ayuda.php') ? 'active' : ''; ?>">
-                <i class="fa-solid fa-headset"></i> Ayuda
-            </a>
-        </li>
     </ul>
     <div class="p-3 border-top border-light border-opacity-10 mt-auto">
         <div class="d-flex align-items-center gap-2 p-2 rounded-3" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">

@@ -8,21 +8,24 @@ extract($controller->index());
 require_once '../layouts/header.php'; 
 ?>
 
-<div class="container-fluid py-2">
+<div class="container-fluid py-4" style="max-width: 1200px; margin-bottom: 3rem;">
+    <!-- Header -->
+    <div class="card border-0 rounded-4 shadow-sm mb-4 glass-header">
+        <div class="card-body p-4">
+            <h2 class="h3 fw-bold text-dark mb-1 text-uppercase" style="font-family: var(--font-heading);">
+                <i class="fa-solid fa-building me-2" style="color: #f59e0b;"></i> <span style="color: #12102f;">Perfil de la Empresa</span>
+            </h2>
+            <p class="text-muted small mb-0">Configuración de datos legales y de identidad corporativa.</p>
+        </div>
+    </div>
+
     <div class="row g-4 justify-content-center">
-        <div class="col-12 col-xl-10">
+        <div class="col-12">
             <!-- Main Card -->
             <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
-                <div class="mb-4">
-                    <h2 class="h3 fw-bold text-dark mb-1" style="font-family: var(--font-heading);">
-                        <span style="color: #f59e0b;">Empresa</span>
-                    </h2>
-                    <p class="text-muted small mb-0">Configuración de datos legales y de identidad del negocio.</p>
-                </div>
-
                 <?php if (!$empresaRegistrada): ?>
                     <!-- Estado: Empresa NO registrada (Mostrar Formulario Vacío) -->
-                    <div class="alert alert-warning border-0 rounded-3 d-flex align-items-center mb-4" style="background-color: #fffbeb; color: #b45309;">
+                    <div class="alert alert-warning border-0 rounded-3 d-flex align-items-center mb-4 shadow-sm" style="background-color: #fffbeb; color: #b45309;">
                         <i class="fa-solid fa-circle-info me-3 fs-4"></i>
                         <div>
                             <strong>Aviso importante:</strong> Aún no has configurado los datos de tu empresa. Por favor, completa el siguiente formulario para poder emitir documentos.
@@ -30,7 +33,7 @@ require_once '../layouts/header.php';
                     </div>
                 <?php else: ?>
                     <!-- Estado: Empresa SI registrada (Modo Edición) -->
-                    <div class="alert alert-success border-0 rounded-3 d-flex align-items-center mb-4" style="background-color: #ecfdf5; color: #047857;">
+                    <div class="alert alert-success border-0 rounded-3 d-flex align-items-center mb-4 shadow-sm" style="background-color: #ecfdf5; color: #047857;">
                         <i class="fa-solid fa-circle-check me-3 fs-4"></i>
                         <div>
                             <strong>Empresa Configurada:</strong> Los datos actuales de tu empresa se muestran a continuación.
@@ -40,7 +43,7 @@ require_once '../layouts/header.php';
 
                 <form action="../../controllers/EmpresaController.php?action=guardar" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                     
-                    <h5 class="fw-bold mb-4 mt-2 border-bottom pb-2" style="font-family: var(--font-heading); color: #334155;">Información de la empresa</h5>
+                    <h5 class="fw-bold mb-4 mt-2 border-bottom pb-2" style="font-family: var(--font-heading); color: #12102f;">Información General</h5>
                     
                     <div class="row g-4">
                         <!-- Logo Upload -->
@@ -110,7 +113,7 @@ require_once '../layouts/header.php';
                     </div>
 
                     <div class="d-flex justify-content-end mt-5 border-top pt-4">
-                        <button type="submit" class="btn btn-orange px-5 py-2 text-white">
+                        <button type="submit" class="btn btn-super-cta text-white rounded-pill px-5">
                             <i class="fa-solid fa-floppy-disk me-2"></i> 
                             <?= $empresaRegistrada ? 'Actualizar Empresa' : 'Guardar Empresa' ?>
                         </button>
@@ -119,8 +122,6 @@ require_once '../layouts/header.php';
                 </form>
 
             </div>
-        </div>
-    </div>
 </div>
 
 <script>

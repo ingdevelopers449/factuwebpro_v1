@@ -123,6 +123,22 @@ CREATE TABLE facturas (
     total_iva DECIMAL(12,2) NOT NULL,
     total_pagar DECIMAL(12,2) NOT NULL,
 
+    -- 🆕 Congela el % de comisión vigente al momento de la venta, para que
+    -- un cambio posterior en usuarios.porcentaje_comision no altere el
+    -- historial de comisiones ya calculado.
+    porcentaje_comision_aplicado DECIMAL(5,2) NULL,
+
+    -- 🆕 VALIDEZ LEGAL ANTE LA DIAN (SIMULADA — alcance académico del prototipo)
+    -- Estos campos se llenan con datos generados internamente por el propio
+    -- sistema (ej. un hash/UUID como CUFE). NO hay integración real con un
+    -- proveedor tecnológico autorizado por la DIAN; eso queda fuera del
+    -- alcance de este prototipo y se documenta como trabajo futuro.
+    cufe VARCHAR(100) UNIQUE NULL,              -- CUFE simulado, generado internamente
+    codigo_qr TEXT NULL,                        -- contenido del código QR simulado
+    estado_dian ENUM('pendiente', 'aceptada', 'rechazada') DEFAULT 'pendiente',
+    motivo_rechazo VARCHAR(255) NULL,           -- motivo de ejemplo si estado_dian = 'rechazada'
+    fecha_validacion_dian DATETIME NULL,
+
     UNIQUE (prefijo_resolucion, consecutivo),
 
     FOREIGN KEY (id_empresa)
@@ -141,6 +157,7 @@ CREATE TABLE facturas (
         REFERENCES usuarios(id_usuario)
         ON DELETE RESTRICT
 );
+
 
 CREATE TABLE detalle_factura (
     id_detalle INT AUTO_INCREMENT PRIMARY KEY,

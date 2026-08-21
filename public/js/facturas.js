@@ -434,6 +434,35 @@ document.addEventListener('DOMContentLoaded', () => {
     formNuevoCliente.addEventListener('submit', guardarClienteRapido);
     btnLeerFactura.addEventListener('click', leerFacturaVoz);
 
+    const btnDescartarVenta = document.getElementById('btnDescartarVenta');
+    if (btnDescartarVenta) {
+        btnDescartarVenta.addEventListener('click', () => {
+            if (carrito.length === 0 && !clienteSeleccionado) {
+                return;
+            }
+            Swal.fire({
+                title: '¿Descartar Venta?',
+                text: "Se vaciará el carrito y se perderá el borrador actual.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, descartar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    carrito = [];
+                    quitarCliente(false);
+                    actualizarCarrito(false);
+                    fetch('../../controllers/FacturaController.php?action=limpiar_borrador', {
+                        method: 'POST'
+                    }).then(() => {
+                        Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Venta descartada', showConfirmButton: false, timer: 1500});
+                    });
+                }
+            });
+        });
+    }
+
     // Procesar Factura
     btnProcesar.addEventListener('click', () => {
         if (carrito.length === 0) {

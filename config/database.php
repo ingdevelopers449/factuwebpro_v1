@@ -1,4 +1,7 @@
 <?php
+// Configuración global de zona horaria
+date_default_timezone_set('America/Bogota');
+
 $host = "127.0.0.1";
 $user = "root";
 $password = "";

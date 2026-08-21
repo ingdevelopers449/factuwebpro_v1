@@ -49,8 +49,8 @@ class EmpresaController
         $telefono = $_POST['telefono'] ?? '';
         $correo = $_POST['correo'] ?? '';
 
-        if (empty($nit) || empty($razon_social)) {
-            $this->setAlert('error', 'Campos Obligatorios', 'El NIT y la Razón social son requeridos.');
+        if (empty($nit) || empty($razon_social) || empty($direccion)) {
+            $this->setAlert('error', 'Campos Incompletos', 'Debe completar los datos legales obligatorios');
             header('Location: ../views/admin/empresa.php');
             exit;
         }

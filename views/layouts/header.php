@@ -23,6 +23,30 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
     exit;
 }
 $_SESSION['last_activity'] = time();
+
+// --- Control de Acceso por Roles (RBAC) ---
+$rol = $_SESSION['usuario']['id_rol'] ?? 0;
+$script_name = basename($_SERVER['SCRIPT_NAME']);
+
+// Módulos que el vendedor (rol 2) TIENE permitido visitar (compartidos con admin)
+$modulos_permitidos_vendedor = [
+    'facturas.php', 
+    'imprimir_factura.php', 
+    'clientes.php', 
+    'mis_ventas.php'
+];
+
+if ($rol == 2) {
+    if (!in_array($script_name, $modulos_permitidos_vendedor)) {
+        $_SESSION['alert'] = [
+            'icon' => 'error',
+            'title' => 'Acceso Denegado',
+            'text' => 'No tienes los permisos necesarios para ver este módulo.'
+        ];
+        header('Location: ../../views/seller/mis_ventas.php');
+        exit;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">

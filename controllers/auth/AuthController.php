@@ -110,7 +110,7 @@ class AuthController
                 exit;
 
             case '2':
-                header('Location: ../../views/seller/dashboard.php');
+                header('Location: ../../views/seller/mis_ventas.php');
                 exit;
 
             default:

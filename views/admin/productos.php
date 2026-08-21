@@ -316,6 +316,30 @@ require_once '../layouts/header.php';
                 if (!form.checkValidity()) {
                     event.preventDefault()
                     event.stopPropagation()
+                } else {
+                    // HU-006.3 Alerta de pérdida
+                    const compra = parseFloat(inputCompra.value) || 0;
+                    const venta = parseFloat(inputVenta.value) || 0;
+                    
+                    if (venta <= compra) {
+                        event.preventDefault(); // Pausar envío
+                        Swal.fire({
+                            title: '¿Margen de pérdida?',
+                            text: 'El precio de venta es menor o igual al precio de compra. ¿Estás seguro de registrar este producto así?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#ea580c',
+                            cancelButtonColor: '#6c757d',
+                            confirmButtonText: 'Sí, guardar de todos modos',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Remover listener temporalmente y enviar
+                                form.submit();
+                            }
+                        });
+                        return;
+                    }
                 }
                 form.classList.add('was-validated')
             }, false)

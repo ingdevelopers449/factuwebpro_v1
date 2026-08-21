@@ -55,18 +55,50 @@ class Factura
                 throw new Exception("La resolución DIAN ha alcanzado su rango final. No se puede facturar.");
             }
 
+            // Obtener el porcentaje_comision del usuario
+            $porcentaje_comision = 0.00;
+            if ($id_usuario) {
+                $queryUsr = "SELECT porcentaje_comision FROM usuarios WHERE id_usuario = ?";
+                $stmtUsr = $this->conn->prepare($queryUsr);
+                $stmtUsr->bind_param('i', $id_usuario);
+                $stmtUsr->execute();
+                $resUsr = $stmtUsr->get_result();
+                if ($rowUsr = $resUsr->fetch_assoc()) {
+                    $porcentaje_comision = (float)$rowUsr['porcentaje_comision'];
+                }
+            }
+
+            // Simular validación DIAN y rechazo (HU-004.14)
+            $estado_dian = 'aceptada';
+            $motivo_rechazo = null;
+
+            if ($id_cliente) {
+                $queryCli = "SELECT identificacion FROM clientes WHERE id_cliente = ?";
+                $stmtCli = $this->conn->prepare($queryCli);
+                $stmtCli->bind_param('i', $id_cliente);
+                $stmtCli->execute();
+                $resCli = $stmtCli->get_result();
+                if ($rowCli = $resCli->fetch_assoc()) {
+                    $identificacion = $rowCli['identificacion'];
+                    // Si el NIT/Cédula tiene un formato inválido (ej. menos de 5 caracteres o caracteres extraños), simular rechazo
+                    if (strlen($identificacion) < 5 || preg_match('/[^a-zA-Z0-9-]/', $identificacion)) {
+                        $estado_dian = 'rechazada';
+                        $motivo_rechazo = 'Regla 90: El documento de identidad o NIT no cumple con los estándares exigidos por la DIAN.';
+                    }
+                }
+            }
+
             // Simular Integración DIAN (Generación de CUFE y QR)
             $cufe_data = $id_empresa . $prefijo_resolucion . $consecutivo . $total_pagar . date('YmdHis');
             $cufe = hash('sha384', $cufe_data); // Simulamos el hash real de la DIAN
             $codigo_qr = "https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=" . $cufe;
-            $estado_dian = 'aceptada';
             $fecha_validacion_dian = date('Y-m-d H:i:s');
 
             // 3. Insertar Factura Maestra con Datos DIAN
-            $queryFac = "INSERT INTO facturas (id_empresa, id_resolucion, prefijo_resolucion, consecutivo, id_cliente, id_usuario, subtotal, total_iva, total_pagar, cufe, codigo_qr, estado_dian, fecha_validacion_dian) 
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $queryFac = "INSERT INTO facturas (id_empresa, id_resolucion, prefijo_resolucion, consecutivo, id_cliente, id_usuario, subtotal, total_iva, total_pagar, cufe, codigo_qr, estado_dian, motivo_rechazo, fecha_validacion_dian, porcentaje_comision_aplicado) 
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmtFac = $this->conn->prepare($queryFac);
-            $stmtFac->bind_param('iisiiidddssss', $id_empresa, $id_resolucion, $prefijo_resolucion, $consecutivo, $id_cliente, $id_usuario, $subtotal, $total_iva, $total_pagar, $cufe, $codigo_qr, $estado_dian, $fecha_validacion_dian);
+            $stmtFac->bind_param('iisiiidddsssssd', $id_empresa, $id_resolucion, $prefijo_resolucion, $consecutivo, $id_cliente, $id_usuario, $subtotal, $total_iva, $total_pagar, $cufe, $codigo_qr, $estado_dian, $motivo_rechazo, $fecha_validacion_dian, $porcentaje_comision);
             $stmtFac->execute();
             $id_factura = $stmtFac->insert_id;
 

@@ -16,13 +16,14 @@ $facturaModel = new Factura();
 // Fechas por defecto: hoy
 $fecha_inicio = $_GET['fecha_inicio'] ?? date('Y-m-d');
 $fecha_fin = $_GET['fecha_fin'] ?? date('Y-m-d');
+$pagina = max(1, (int)($_GET['page'] ?? 1));
+$por_pagina = 10;
 
-$ventas = $facturaModel->obtenerVentasPorUsuario($id_usuario, $fecha_inicio, $fecha_fin);
+$ventas = $facturaModel->obtenerVentasPorUsuario($id_usuario, $fecha_inicio, $fecha_fin, $pagina, $por_pagina);
+$total_registros = $facturaModel->contarVentasPorUsuario($id_usuario, $fecha_inicio, $fecha_fin);
+$total_paginas = max(1, (int)ceil($total_registros / $por_pagina));
 
-$total_ventas = 0;
-foreach ($ventas as $venta) {
-    $total_ventas += $venta['total_pagar'];
-}
+$total_ventas = $facturaModel->totalVentasPorUsuario($id_usuario, $fecha_inicio, $fecha_fin);
 
 // Comisión del 5% como ejemplo (podría ser parametrizable)
 $comision_estimada = $total_ventas * 0.05;
@@ -77,7 +78,7 @@ $formatMoney->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, 0);
                 <div class="card-body p-4">
                     <h6 class="text-white-50 fw-bold mb-1 text-uppercase" style="letter-spacing: 1px;">Total Vendido (Periodo)</h6>
                     <h2 class="text-white fw-bold mb-0"><?= $formatMoney->format($total_ventas) ?></h2>
-                    <p class="text-white-50 small mt-2 mb-0"><i class="fa-solid fa-chart-line text-success me-1"></i> <?= count($ventas) ?> facturas emitidas</p>
+                    <p class="text-white-50 small mt-2 mb-0"><i class="fa-solid fa-chart-line text-success me-1"></i> <?= $total_registros ?> facturas emitidas</p>
                 </div>
             </div>
         </div>
@@ -93,6 +94,22 @@ $formatMoney->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, 0);
                 </div>
             </div>
         </div>
+        <?php if ($total_paginas > 1): ?>
+            <div class="card-footer bg-white border-0 px-4 py-3 d-flex justify-content-between align-items-center">
+                <span class="text-muted small">Página <?= $pagina ?> de <?= $total_paginas ?></span>
+                <nav aria-label="Paginación de mis ventas">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item <?= $pagina <= 1 ? 'disabled' : '' ?>">
+                            <a class="page-link" href="?fecha_inicio=<?= urlencode($fecha_inicio) ?>&fecha_fin=<?= urlencode($fecha_fin) ?>&page=<?= $pagina - 1 ?>">Anterior</a>
+                        </li>
+                        <li class="page-item active"><span class="page-link"><?= $pagina ?></span></li>
+                        <li class="page-item <?= $pagina >= $total_paginas ? 'disabled' : '' ?>">
+                            <a class="page-link" href="?fecha_inicio=<?= urlencode($fecha_inicio) ?>&fecha_fin=<?= urlencode($fecha_fin) ?>&page=<?= $pagina + 1 ?>">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        <?php endif; ?>
     </div>
 
     <!-- Tabla -->

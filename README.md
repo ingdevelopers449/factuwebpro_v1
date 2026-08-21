@@ -121,6 +121,17 @@ factuwebpro/
 │   ├── js/facturas.js        # Lógica POS + AJAX
 │   ├── index.php             # Landing page
 │   └── uploads/              # Logos e imágenes de productos
+├── documentació logica/      # Guía sencilla de la lógica del sistema
+│   ├── 00_INDICE.md
+│   ├── 01_MODELOS.md
+│   ├── 02_INSTANCIAS_CLASES_FUNCIONES.md
+│   ├── 03_CONTROLADORES.md
+│   ├── 04_VISTAS_FRONTEND.md
+│   ├── 05_FOREACH_FOR_CONDICIONES.md
+│   ├── 06_PROCESOS_ALGORITMICOS.md
+│   ├── 07_MODULOS.md
+│   ├── 08_RELACION_FRONTEND_BACKEND_NEGOCIO.md
+│   └── 09_GUIA_DIAGNOSTICO_IA.md
 └── sql/
     └── DB-FACTUWEBPRO.sql    # Schema completo
 ```
@@ -172,6 +183,25 @@ $_SESSION['alert']  ← flash message consumido por footer.php (SweetAlert2)
 ```
 URL: controllers/FacturaController.php?action=procesar
 ```
+
+---
+
+## 📚 Documentación Lógica
+
+La carpeta [`documentació logica`](documentació%20logica/00_INDICE.md) contiene explicaciones sencillas sobre la estructura y el funcionamiento del proyecto. Cada documento se puede abrir directamente como un README en GitHub, VS Code u otro visor Markdown.
+
+| Documento | Contenido |
+|---|---|
+| [Índice general](documentació%20logica/00_INDICE.md) | Orden recomendado y mapa del sistema |
+| [Modelos](documentació%20logica/01_MODELOS.md) | Modelos, consultas, conexión y base de datos |
+| [Instancias, clases y funciones](documentació%20logica/02_INSTANCIAS_CLASES_FUNCIONES.md) | Cómo se crean y utilizan objetos y métodos |
+| [Controladores](documentació%20logica/03_CONTROLADORES.md) | Peticiones, acciones, validaciones y respuestas |
+| [Vistas y FrontEnd](documentació%20logica/04_VISTAS_FRONTEND.md) | Pantallas, formularios, JavaScript y AJAX |
+| [Foreach, for y condiciones](documentació%20logica/05_FOREACH_FOR_CONDICIONES.md) | Recorridos de listas y decisiones del código |
+| [Procesos algorítmicos](documentació%20logica/06_PROCESOS_ALGORITMICOS.md) | Login, facturación, transacciones y paginación |
+| [Módulos](documentació%20logica/07_MODULOS.md) | Descripción de cada módulo funcional |
+| [FrontEnd, BackEnd y negocio](documentació%20logica/08_RELACION_FRONTEND_BACKEND_NEGOCIO.md) | Cómo viajan los datos entre capas |
+| [Guía de diagnóstico para IA](documentació%20logica/09_GUIA_DIAGNOSTICO_IA.md) | Pasos para encontrar y corregir errores |
 
 ---
 

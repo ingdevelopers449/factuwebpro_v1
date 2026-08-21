@@ -11,15 +11,15 @@ class Usuario
         $this->conn = $conn;
     }
 
-    public function registrar(int $id_empresa, string $nombre, string $email, string $password, int $id_rol, string $estado)
+    public function registrar(int $id_empresa, string $nombre, string $email, string $password, int $id_rol, string $estado, float $porcentaje_comision = 0.00)
     {
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-        $query = 'INSERT INTO usuarios (id_empresa, nombre, email, password_hash, id_rol, estado) VALUES (?, ?, ?, ?, ?, ?)';
+        $query = 'INSERT INTO usuarios (id_empresa, nombre, email, password_hash, id_rol, estado, porcentaje_comision) VALUES (?, ?, ?, ?, ?, ?, ?)';
 
         $stmt = $this->conn->prepare($query);
         if ($stmt) {
-            $stmt->bind_param('isssis', $id_empresa, $nombre, $email, $hashed_password, $id_rol, $estado);
+            $stmt->bind_param('isssisd', $id_empresa, $nombre, $email, $hashed_password, $id_rol, $estado, $porcentaje_comision);
             $result = $stmt->execute();
             $stmt->close();
             return $result;
@@ -127,7 +127,7 @@ class Usuario
 
     public function obtenerTodos()
     {
-        $query = 'SELECT u.id_usuario, u.nombre, u.email, u.id_rol, r.nombre_rol, u.estado 
+        $query = 'SELECT u.id_usuario, u.nombre, u.email, u.id_rol, r.nombre_rol, u.estado, u.porcentaje_comision
                   FROM usuarios u 
                   LEFT JOIN roles r ON u.id_rol = r.id_rol';
         $result = $this->conn->query($query);
@@ -150,9 +150,9 @@ class Usuario
 
     public function actualizar(int $id_usuario, array $datos)
     {
-        $query = 'UPDATE usuarios SET nombre = ?, id_rol = ?, estado = ?';
-        $types = 'sis';
-        $params = [$datos['nombre'], $datos['id_rol'], $datos['estado']];
+        $query = 'UPDATE usuarios SET nombre = ?, id_rol = ?, estado = ?, porcentaje_comision = ?';
+        $types = 'sisd';
+        $params = [$datos['nombre'], $datos['id_rol'], $datos['estado'], $datos['porcentaje_comision'] ?? 0.00];
 
         if (!empty($datos['email'])) {
             $query .= ', email = ?';

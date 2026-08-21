@@ -20,13 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $datos = [
-        'nombre' => trim($_POST['nombre'] ?? ''),
-        'email' => trim($_POST['email'] ?? ''),
-        'id_rol' => trim($_POST['id_rol'] ?? ''),
-        'estado' => $_POST['estado'] ?? ''
+        'nombre'               => trim($_POST['nombre'] ?? ''),
+        'email'                => trim($_POST['email'] ?? ''),
+        'id_rol'               => trim($_POST['id_rol'] ?? ''),
+        'estado'               => $_POST['estado'] ?? '',
+        'porcentaje_comision'  => (float)($_POST['porcentaje_comision'] ?? 0)
     ];
 
-    if (empty($datos['nombre']) || empty($datos['email']) || empty($datos['id_rol']) || empty($datos['estado'])) {
+    if (empty($datos['nombre']) || empty($datos['id_rol']) || empty($datos['estado'])) {
         mostrarAlerta('error', 'Campos obligatorios', 'Todos los campos obligatorios (*) deben ser completados.', '../views/admin/gempleados.php');
     }
 

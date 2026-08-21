@@ -214,8 +214,66 @@ class Factura
         return [];
     }
 
-    public function obtenerVentasPorUsuario(int $id_usuario, string $fecha_inicio = null, string $fecha_fin = null): array
+    public function contarVentasPorUsuario(int $id_usuario, string $fecha_inicio = null, string $fecha_fin = null): int
     {
+        $query = "SELECT COUNT(*) AS total FROM facturas f WHERE f.id_usuario = ?";
+        $params = [$id_usuario];
+        $types = 'i';
+
+        if ($fecha_inicio && $fecha_fin) {
+            $query .= " AND DATE(f.fecha_emision) BETWEEN ? AND ?";
+            $params[] = $fecha_inicio;
+            $params[] = $fecha_fin;
+            $types .= 'ss';
+        } elseif ($fecha_inicio) {
+            $query .= " AND DATE(f.fecha_emision) >= ?";
+            $params[] = $fecha_inicio;
+            $types .= 's';
+        }
+
+        $stmt = $this->conn->prepare($query);
+        if (!$stmt) {
+            return 0;
+        }
+
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        return (int)$stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function totalVentasPorUsuario(int $id_usuario, string $fecha_inicio = null, string $fecha_fin = null): float
+    {
+        $query = "SELECT COALESCE(SUM(f.total_pagar), 0) AS total FROM facturas f WHERE f.id_usuario = ?";
+        $params = [$id_usuario];
+        $types = 'i';
+
+        if ($fecha_inicio && $fecha_fin) {
+            $query .= " AND DATE(f.fecha_emision) BETWEEN ? AND ?";
+            $params[] = $fecha_inicio;
+            $params[] = $fecha_fin;
+            $types .= 'ss';
+        } elseif ($fecha_inicio) {
+            $query .= " AND DATE(f.fecha_emision) >= ?";
+            $params[] = $fecha_inicio;
+            $types .= 's';
+        }
+
+        $stmt = $this->conn->prepare($query);
+        if (!$stmt) {
+            return 0.0;
+        }
+
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        return (float)$stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function obtenerVentasPorUsuario(int $id_usuario, string $fecha_inicio = null, string $fecha_fin = null, int $pagina = 1, int $por_pagina = 10): array
+    {
+        $pagina = max(1, $pagina);
+        $por_pagina = max(1, $por_pagina);
+        $offset = ($pagina - 1) * $por_pagina;
+
         $query = "
             SELECT f.id_factura, f.prefijo_resolucion, f.consecutivo, f.fecha_emision, f.total_pagar, 
                    c.nombre_razon_social as cliente_nombre, c.identificacion as cliente_identificacion
@@ -238,7 +296,10 @@ class Factura
             $types .= "s";
         }
 
-        $query .= " ORDER BY f.fecha_emision DESC";
+        $query .= " ORDER BY f.fecha_emision DESC LIMIT ? OFFSET ?";
+        $params[] = $por_pagina;
+        $params[] = $offset;
+        $types .= 'ii';
 
         $stmt = $this->conn->prepare($query);
         if ($stmt) {

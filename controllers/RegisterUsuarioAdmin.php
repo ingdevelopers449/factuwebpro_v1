@@ -18,6 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = trim($_POST['password'] ?? '');
     $rol = $_POST['id_rol'] ?? '';
     $estado = $_POST['estado'] ?? '';
+    $porcentaje_comision = (float)($_POST['porcentaje_comision'] ?? 0);
     
     // Obtener id_empresa de la sesión actual
     $id_empresa = $_SESSION['usuario']['id_empresa'] ?? 1;
@@ -32,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mostrarAlerta('error', 'Correo registrado', 'El email ya está registrado.', '../views/admin/gempleados.php');
     }
 
-    $registrado = $usuarioModel->registrar($id_empresa, $nombre, $email, $password, $rol, $estado);
+    $registrado = $usuarioModel->registrar($id_empresa, $nombre, $email, $password, $rol, $estado, $porcentaje_comision);
 
     if ($registrado) {
         mostrarAlerta('success', '¡Registro Exitoso!', 'Cuenta creada exitosamente.', '../views/admin/gempleados.php');

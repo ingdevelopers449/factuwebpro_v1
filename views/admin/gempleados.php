@@ -41,6 +41,7 @@ require_once '../layouts/header.php';
                                 <th class="border-0 px-4 py-3 text-muted small fw-bold text-uppercase">Nombre Completo</th>
                                 <th class="border-0 px-4 py-3 text-muted small fw-bold text-uppercase">Email</th>
                                 <th class="border-0 px-4 py-3 text-muted small fw-bold text-uppercase">Rol</th>
+                                <th class="border-0 px-4 py-3 text-muted small fw-bold text-uppercase">Comisión</th>
                                 <th class="border-0 px-4 py-3 text-muted small fw-bold text-uppercase">Estado</th>
                                 <th class="border-0 px-4 py-3 text-muted small fw-bold text-uppercase text-center">Acciones</th>
                             </tr>
@@ -76,6 +77,17 @@ require_once '../layouts/header.php';
                                         <i class="fa-solid <?= $rol_icon ?> me-1"></i> <?= $rol_name ?>
                                     </span>
                                 </td>
+                                <!-- Comisión -->
+                                <td class="px-4 py-3">
+                                    <?php $comision = (float)($usuario['porcentaje_comision'] ?? 0); ?>
+                                    <?php if ($comision > 0): ?>
+                                        <span class="badge rounded-pill px-3 py-2" style="background:rgba(234,88,12,.12); color:#ea580c;">
+                                            <i class="fa-solid fa-percent me-1" style="font-size:.7rem;"></i><?= number_format($comision,2) ?>%
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="text-muted small">—</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td class="px-4 py-3">
                                      <?php if (strtolower($usuario['estado']) === 'activo' || $usuario['estado'] == 1 || $usuario['estado'] == '1'): ?>
                                          <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill border border-success border-opacity-25">
@@ -99,6 +111,7 @@ require_once '../layouts/header.php';
                                             data-email="<?= $usuario['email'] ?>"
                                             data-rol="<?= $usuario['id_rol'] ?>"
                                             data-estado="<?= $usuario['estado'] ?>"
+                                            data-comision="<?= htmlspecialchars($usuario['porcentaje_comision'] ?? '0') ?>"
                                             title="Editar">
                                             <i class="fa-solid fa-pen"></i>
                                         </button>
@@ -163,15 +176,32 @@ require_once '../layouts/header.php';
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <label class="form-label text-secondary small fw-bold">Estado *</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-toggle-on"></i></span>
-                            <select name="estado" id="estadoSelect" required class="form-select border-start-0 ps-0 text-muted">
-                                <option value="">Seleccione un estado...</option>
-                                <?php foreach ($estados as $val => $texto): ?>
-                                    <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($texto) ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                        <div>
+                            <label class="form-label text-secondary small fw-bold">Estado *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-toggle-on"></i></span>
+                                <select name="estado" id="estadoSelect" required class="form-select border-start-0 ps-0 text-muted">
+                                    <option value="">Seleccione un estado...</option>
+                                    <?php foreach ($estados as $val => $texto): ?>
+                                        <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($texto) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Comisión (solo aplica a rol 2) -->
+                        <div>
+                            <label class="form-label text-secondary small fw-bold">
+                                <i class="fa-solid fa-percent me-1" style="color:#ea580c;"></i>% Comisión sobre ventas
+                                <span class="text-muted fw-normal">(aplica a Empleados/Vendedores)</span>
+                            </label>
+                            <div class="input-group">
+                                <input type="number" name="porcentaje_comision" min="0" max="100" step="0.01"
+                                       class="form-control" placeholder="Ej: 5.00" value="0">
+                                <span class="input-group-text bg-light text-muted">%</span>
+                            </div>
+                            <div class="form-text text-muted" style="font-size:.75rem;">
+                                Se congela en cada factura al momento de la venta.
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -243,6 +273,21 @@ require_once '../layouts/header.php';
                             </select>
                         </div>
                     </div>
+                    <!-- Comisión -->
+                    <div>
+                        <label class="form-label text-secondary small fw-bold">
+                            <i class="fa-solid fa-percent me-1" style="color:#ea580c;"></i>% Comisión sobre ventas
+                            <span class="text-muted fw-normal">(aplica a Empleados/Vendedores)</span>
+                        </label>
+                        <div class="input-group">
+                            <input type="number" name="porcentaje_comision" id="edit_comision" min="0" max="100" step="0.01"
+                                   class="form-control" placeholder="Ej: 5.00">
+                            <span class="input-group-text bg-light text-muted">%</span>
+                        </div>
+                        <div class="form-text text-muted" style="font-size:.75rem;">
+                            Se congela en cada factura al momento de la venta.
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer border-top border-light p-4">
                     <button type="button" class="btn btn-light border rounded-3" data-bs-dismiss="modal">Cancelar</button>
@@ -263,6 +308,7 @@ require_once '../layouts/header.php';
                 document.getElementById('edit_rol').value = this.getAttribute('data-rol');
                 document.getElementById('edit_usuario').value = this.getAttribute('data-name');
                 document.getElementById('edit_email').value = this.getAttribute('data-email');
+                document.getElementById('edit_comision').value = this.getAttribute('data-comision') || '0';
 
                 let estadoVal = this.getAttribute('data-estado');
                 let selectEstado = document.getElementById('edit_estado');

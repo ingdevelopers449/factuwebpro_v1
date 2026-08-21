@@ -13,7 +13,12 @@ class Categoria
 
     public function obtenerTodas()
     {
-        $query = "SELECT id_categoria, nombre_categoria, descripcion, estado, fecha_creacion FROM categorias ORDER BY nombre_categoria ASC";
+        $query = "SELECT c.id_categoria, c.nombre_categoria, c.descripcion, c.estado, c.fecha_creacion,
+                         COUNT(p.id_producto) AS total_productos
+                  FROM categorias c
+                  LEFT JOIN productos p ON c.id_categoria = p.id_categoria
+                  GROUP BY c.id_categoria
+                  ORDER BY c.nombre_categoria ASC";
         $result = $this->conn->query($query);
         $categorias = [];
         if ($result && $result->num_rows > 0) {

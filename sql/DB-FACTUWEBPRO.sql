@@ -213,3 +213,21 @@ CREATE TABLE detalle_borrador (
         REFERENCES productos(id_producto)
         ON DELETE RESTRICT
 );
+
+-- =========================================================================
+-- DATOS INICIALES (SEED)
+-- =========================================================================
+
+-- Roles del sistema
+INSERT INTO roles (id_rol, nombre_rol) VALUES
+    (1, 'Administrador'),
+    (2, 'Empleado');
+
+-- Empresa por defecto
+INSERT INTO empresa (id_empresa, nit, razon_social, direccion, telefono, email) VALUES
+    (1, '000000000', 'Mi Empresa S.A.S.', 'Dirección por configurar', '0000000', 'empresa@factuweb.com');
+
+-- Usuario Administrador por defecto
+-- Correo: admin@factuweb.com | Contraseña: admin123
+INSERT INTO usuarios (id_empresa, nombre, email, password_hash, id_rol, estado, porcentaje_comision) VALUES
+    (1, 'Administrador Principal', 'admin@factuweb.com', '$2y$10$Inhgt2tNghhbEh4O3xJKP.6Qzv4XUZhiBcvsO1M0sdiYrTDKiYD7q', 1, 'activo', 0.00);

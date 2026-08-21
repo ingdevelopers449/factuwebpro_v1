@@ -202,6 +202,8 @@ La carpeta [`documentació logica`](documentació%20logica/00_INDICE.md) contien
 | [Módulos](documentació%20logica/07_MODULOS.md) | Descripción de cada módulo funcional |
 | [FrontEnd, BackEnd y negocio](documentació%20logica/08_RELACION_FRONTEND_BACKEND_NEGOCIO.md) | Cómo viajan los datos entre capas |
 | [Guía de diagnóstico para IA](documentació%20logica/09_GUIA_DIAGNOSTICO_IA.md) | Pasos para encontrar y corregir errores |
+| [Diagrama de clases](documentació%20logica/10_DIAGRAMA_CLASES.md) | Diagrama de clases y métodos de las entidades |
+| [Guía de procesos](documentació%20logica/11_GUIA_PROCESOS.md) | Guía rápida de los procesos del sistema |
 
 ---
 

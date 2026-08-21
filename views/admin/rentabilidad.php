@@ -14,37 +14,55 @@ require_once '../layouts/header.php';
 
 <div class="container-fluid py-4" style="max-width: 1400px;">
     
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 glass-header p-4 rounded-4 shadow-sm">
-        <div>
-            <h2 class="h3 fw-bold text-dark mb-1 text-uppercase" style="font-family: var(--font-heading);">
-                <i class="fa-solid fa-chart-line me-2" style="color: #f59e0b;"></i> <span style="color: #12102f;">Ventas y Rentabilidad</span>
-            </h2>
-            <p class="text-muted small mb-0">Análisis financiero y márgenes de utilidad del negocio (Sólo Administrador)</p>
-        </div>
-        <div class="d-flex gap-2">
-            <button onclick="window.print()" class="btn btn-outline-secondary px-4 btn-print shadow-sm">
-                <i class="fa-solid fa-print me-2"></i> Exportar / Imprimir
-            </button>
-        </div>
-    </div>
-
-    <!-- Filtros -->
-    <div class="card border-0 rounded-4 shadow-sm mb-4 filters-section">
+    <!-- Header & Smart Filters -->
+    <div class="card border-0 rounded-4 shadow-sm mb-4 glass-header">
         <div class="card-body p-4">
-            <form action="rentabilidad.php" method="GET" class="row align-items-end g-3">
-                <div class="col-md-4">
-                    <label class="form-label text-muted small fw-bold text-uppercase">Desde</label>
-                    <input type="date" name="desde" class="form-control bg-light border-0" value="<?= htmlspecialchars($desde) ?>">
+            <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-4">
+                
+                <!-- Titulo -->
+                <div>
+                    <h2 class="h3 fw-bold text-dark mb-1 text-uppercase" style="font-family: var(--font-heading);">
+                        <i class="fa-solid fa-chart-line me-2" style="color: #f59e0b;"></i> <span style="color: #12102f;">Dashboard Financiero</span>
+                    </h2>
+                    <p class="text-muted small mb-0">Rentabilidad, ventas y márgenes de utilidad (Admin)</p>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label text-muted small fw-bold text-uppercase">Hasta</label>
-                    <input type="date" name="hasta" class="form-control bg-light border-0" value="<?= htmlspecialchars($hasta) ?>">
+                
+                <!-- Smart Filters -->
+                <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center bg-white p-2 p-md-3 rounded-4 shadow-sm border">
+                    <!-- Quick Filters -->
+                    <div class="btn-group shadow-sm" role="group">
+                        <button type="button" class="btn btn-outline-primary btn-sm fw-bold px-3" onclick="setRangoFechas('hoy')">Hoy</button>
+                        <button type="button" class="btn btn-outline-primary btn-sm fw-bold px-3" onclick="setRangoFechas('semana')">Semana</button>
+                        <button type="button" class="btn btn-outline-primary btn-sm fw-bold px-3" onclick="setRangoFechas('mes')">Mes</button>
+                        <button type="button" class="btn btn-outline-primary btn-sm fw-bold px-3" onclick="setRangoFechas('anio')">Año</button>
+                    </div>
+                    
+                    <div class="vr d-none d-md-block text-secondary"></div>
+                    
+                    <!-- Formulario Custom Fechas -->
+                    <form id="formFiltroRentabilidad" action="rentabilidad.php" method="GET" class="d-flex flex-column flex-sm-row gap-2 align-items-sm-center m-0">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted small fw-bold">Del</span>
+                            <input type="date" id="inputDesde" name="desde" class="form-control form-control-sm bg-light border-0 fw-medium text-dark" value="<?= htmlspecialchars($desde) ?>" style="width: 140px;">
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted small fw-bold">al</span>
+                            <input type="date" id="inputHasta" name="hasta" class="form-control form-control-sm bg-light border-0 fw-medium text-dark" value="<?= htmlspecialchars($hasta) ?>" style="width: 140px;">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm shadow-sm px-3 ms-sm-2">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </form>
                 </div>
-                <div class="col-md-4">
-                    <button type="submit" class="btn btn-primary w-100 shadow-sm"><i class="fa-solid fa-filter me-2"></i> Aplicar Filtros</button>
+                
+                <!-- Imprimir -->
+                <div>
+                    <button onclick="window.print()" class="btn btn-outline-secondary px-4 shadow-sm rounded-3">
+                        <i class="fa-solid fa-print me-2"></i> Exportar
+                    </button>
                 </div>
-            </form>
+                
+            </div>
         </div>
     </div>
 
@@ -69,49 +87,75 @@ require_once '../layouts/header.php';
             </div>
         <?php endif; ?>
 
-        <!-- KPIs -->
+        <!-- KPIs Rediseñados -->
         <div class="row g-4 mb-4">
+            <!-- Ventas -->
             <div class="col-xl-3 col-md-6">
-                <div class="card kpi-card shadow-sm h-100 kpi-ventas">
-                    <div class="card-body p-4 d-flex align-items-center">
-                        <div class="kpi-icon me-3"><i class="fa-solid fa-sack-dollar"></i></div>
-                        <div>
-                            <p class="text-muted small fw-bold text-uppercase mb-1">Ventas (Sin IVA)</p>
-                            <h3 class="fw-bold mb-0 text-dark"><?= $formatMoney->formatCurrency($total_ventas, 'COP') ?></h3>
+                <div class="card border-0 rounded-4 shadow-sm h-100 position-relative overflow-hidden" style="background: linear-gradient(135deg, #12102f 0%, #1e1b4b 100%);">
+                    <div class="card-body p-4 position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <p class="text-white-50 small fw-bold text-uppercase mb-0">Ingresos (Sin IVA)</p>
+                            <div class="bg-white bg-opacity-10 rounded-3 p-2 text-white">
+                                <i class="fa-solid fa-sack-dollar fa-lg"></i>
+                            </div>
                         </div>
+                        <h3 class="fw-bold mb-0 text-white"><?= $formatMoney->formatCurrency($total_ventas, 'COP') ?></h3>
+                    </div>
+                    <div class="position-absolute end-0 bottom-0 opacity-25" style="transform: translate(20%, 20%); z-index: 0;">
+                        <i class="fa-solid fa-sack-dollar" style="font-size: 6rem; color: #fff;"></i>
                     </div>
                 </div>
             </div>
+
+            <!-- Costos -->
             <div class="col-xl-3 col-md-6">
-                <div class="card kpi-card shadow-sm h-100 kpi-costos">
-                    <div class="card-body p-4 d-flex align-items-center">
-                        <div class="kpi-icon me-3"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-                        <div>
-                            <p class="text-muted small fw-bold text-uppercase mb-1">Costos Operativos</p>
-                            <h3 class="fw-bold mb-0 text-dark"><?= $formatMoney->formatCurrency($total_costos, 'COP') ?></h3>
+                <div class="card border-0 rounded-4 shadow-sm h-100 bg-white border-start border-4 border-warning">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <p class="text-muted small fw-bold text-uppercase mb-0">Costo de Mercancía</p>
+                            <div class="bg-warning bg-opacity-10 rounded-3 p-2 text-warning">
+                                <i class="fa-solid fa-hand-holding-dollar fa-lg"></i>
+                            </div>
                         </div>
+                        <h3 class="fw-bold mb-0 text-dark"><?= $formatMoney->formatCurrency($total_costos, 'COP') ?></h3>
                     </div>
                 </div>
             </div>
+
+            <!-- Utilidad -->
             <div class="col-xl-3 col-md-6">
-                <div class="card kpi-card shadow-sm h-100 kpi-utilidad">
-                    <div class="card-body p-4 d-flex align-items-center">
-                        <div class="kpi-icon me-3"><i class="fa-solid fa-piggy-bank"></i></div>
-                        <div>
-                            <p class="text-muted small fw-bold text-uppercase mb-1">Utilidad Neta</p>
-                            <h3 class="fw-bold mb-0 <?= $utilidad_neta >= 0 ? 'text-success' : 'text-danger' ?>"><?= $formatMoney->formatCurrency($utilidad_neta, 'COP') ?></h3>
+                <?php 
+                $utilidadClass = $utilidad_neta >= 0 ? 'border-success' : 'border-danger';
+                $utilidadIconClass = $utilidad_neta >= 0 ? 'text-success bg-success' : 'text-danger bg-danger';
+                $utilidadTextClass = $utilidad_neta >= 0 ? 'text-success' : 'text-danger';
+                ?>
+                <div class="card border-0 rounded-4 shadow-sm h-100 bg-white border-start border-4 <?= $utilidadClass ?>">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <p class="text-muted small fw-bold text-uppercase mb-0">Ganancia Neta</p>
+                            <div class="<?= $utilidadIconClass ?> bg-opacity-10 rounded-3 p-2">
+                                <i class="fa-solid fa-piggy-bank fa-lg"></i>
+                            </div>
                         </div>
+                        <h3 class="fw-bold mb-0 <?= $utilidadTextClass ?>"><?= $formatMoney->formatCurrency($utilidad_neta, 'COP') ?></h3>
                     </div>
                 </div>
             </div>
+
+            <!-- Margen -->
             <div class="col-xl-3 col-md-6">
-                <div class="card kpi-card shadow-sm h-100 kpi-margen">
-                    <div class="card-body p-4 d-flex align-items-center">
-                        <div class="kpi-icon me-3"><i class="fa-solid fa-percent"></i></div>
-                        <div>
-                            <p class="text-muted small fw-bold text-uppercase mb-1">Margen Promedio</p>
-                            <h3 class="fw-bold mb-0 text-dark"><?= number_format($margen, 1) ?>%</h3>
+                <div class="card border-0 rounded-4 shadow-sm h-100 position-relative overflow-hidden" style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);">
+                    <div class="card-body p-4 position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <p class="text-white-50 small fw-bold text-uppercase mb-0">Margen Promedio</p>
+                            <div class="bg-white bg-opacity-25 rounded-3 p-2 text-white">
+                                <i class="fa-solid fa-percent fa-lg"></i>
+                            </div>
                         </div>
+                        <h3 class="fw-bold mb-0 text-white"><?= number_format($margen, 1) ?>%</h3>
+                    </div>
+                    <div class="position-absolute end-0 bottom-0 opacity-25" style="transform: translate(10%, 20%); z-index: 0;">
+                        <i class="fa-solid fa-chart-pie" style="font-size: 6rem; color: #fff;"></i>
                     </div>
                 </div>
             </div>
@@ -251,6 +295,46 @@ require_once '../layouts/header.php';
     document.addEventListener('DOMContentLoaded', () => {
         modalDetalle = new bootstrap.Modal(document.getElementById('modalDetalleFactura'));
     });
+
+    // Lógica para Filtros Rápidos
+    function setRangoFechas(tipo) {
+        const inputDesde = document.getElementById('inputDesde');
+        const inputHasta = document.getElementById('inputHasta');
+        const form = document.getElementById('formFiltroRentabilidad');
+        
+        const hoy = new Date();
+        const formatDate = (date) => {
+            const d = String(date.getDate()).padStart(2, '0');
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const y = date.getFullYear();
+            return `${y}-${m}-${d}`;
+        };
+
+        let inicio, fin;
+
+        if (tipo === 'hoy') {
+            inicio = hoy;
+            fin = hoy;
+        } else if (tipo === 'semana') {
+            // Lunes de esta semana
+            const diaSemana = hoy.getDay();
+            const diff = hoy.getDate() - diaSemana + (diaSemana === 0 ? -6 : 1); 
+            inicio = new Date(hoy.setDate(diff));
+            fin = new Date(); // hasta hoy
+        } else if (tipo === 'mes') {
+            inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            fin = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+        } else if (tipo === 'anio') {
+            inicio = new Date(hoy.getFullYear(), 0, 1);
+            fin = new Date(hoy.getFullYear(), 11, 31);
+        }
+
+        inputDesde.value = formatDate(inicio);
+        inputHasta.value = formatDate(fin);
+        
+        // Auto-enviar formulario
+        form.submit();
+    }
 
     function verDetalleFactura(id_factura, numero_factura) {
         document.getElementById('lblFacturaNumero').textContent = 'Factura #' + numero_factura;

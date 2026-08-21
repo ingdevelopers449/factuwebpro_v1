@@ -620,3 +620,48 @@ footer {
     border-radius: 0.5rem;
     padding: 1rem;
 }
+
+/* --- Ticket POS (Factura Impresión) --- */
+body.ticket-pos {
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    color: #000;
+    background: #fff;
+    margin: 0;
+    padding: 20px;
+    width: 80mm; /* Formato ticket POS */
+}
+
+.ticket-pos .text-center { text-align: center; }
+.ticket-pos .text-right { text-align: right; }
+.ticket-pos .text-left { text-align: left; }
+.ticket-pos .fw-bold { font-weight: bold; }
+.ticket-pos .mb-1 { margin-bottom: 5px; }
+.ticket-pos .mb-2 { margin-bottom: 10px; }
+.ticket-pos .mt-2 { margin-top: 10px; }
+
+.ticket-pos hr {
+    border: none;
+    border-top: 1px dashed #000;
+    margin: 10px 0;
+}
+
+.ticket-pos table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ticket-pos th, .ticket-pos td {
+    padding: 2px 0;
+    vertical-align: top;
+}
+
+.ticket-pos .producto-nombre {
+    font-size: 11px;
+    display: block;
+}
+
+@media print {
+    .ticket-pos .no-print { display: none !important; }
+    body.ticket-pos { margin: 0; padding: 0; }
+}

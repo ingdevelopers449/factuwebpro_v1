@@ -1,5 +1,6 @@
 // 1. Estado de Datos
 let catalogoProductos = [];
+let listaCategorias = [];
 let listaClientes = [];
 let carrito = [];
 let clienteSeleccionado = null;
@@ -30,7 +31,7 @@ let loaderPOS, interfazPOS, cuerpoCarrito;
 let txtSubtotal, txtIva, txtTotal, btnProcesar, btnLeerFactura;
 let buscadorCliente, resultadosCliente, btnBuscarCliente;
 let clienteNombre, clienteIdentificacion, clienteTelefono, btnRemoverCliente;
-let buscadorProductosPOS, resultadosProducto;
+let buscadorProductosPOS, resultadosProducto, filtroCategoria;
 let lblStockDisponible, lblProductoSeleccionado;
 let modalNuevoClienteObj, formNuevoCliente;
 
@@ -43,6 +44,17 @@ async function inicializarPOS() {
         if (data.success) {
             catalogoProductos = data.productos;
             listaClientes = data.clientes;
+            listaCategorias = data.categorias || [];
+            
+            // Poblar select de categorías
+            if (filtroCategoria) {
+                listaCategorias.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.id_categoria;
+                    option.textContent = cat.nombre_categoria;
+                    filtroCategoria.appendChild(option);
+                });
+            }
             
             if (data.borrador) {
                 if (data.borrador.id_cliente) {
@@ -153,6 +165,8 @@ function guardarClienteRapido(e) {
     formData.append('identificacion', document.getElementById('nc_identificacion').value);
     formData.append('nombre_razon_social', document.getElementById('nc_nombre').value);
     formData.append('telefono', document.getElementById('nc_telefono').value);
+    formData.append('email', document.getElementById('nc_email').value);
+    formData.append('direccion', document.getElementById('nc_direccion').value);
 
     fetch('../../controllers/FacturaController.php?action=crear_cliente_ajax', {
         method: 'POST',
@@ -187,17 +201,21 @@ function configurarBuscadorProducto() {
         const query = this.value.toLowerCase().trim();
         resultadosProducto.innerHTML = '';
         
-        if (query.length < 2) {
+        const idCategoriaFiltro = filtroCategoria ? filtroCategoria.value : '';
+
+        // Si la búsqueda tiene menos de 2 caracteres y no hay categoría, ocultar
+        if (query.length < 2 && idCategoriaFiltro === '') {
             resultadosProducto.classList.add('d-none');
             lblStockDisponible.textContent = '--';
             lblProductoSeleccionado.textContent = 'Ningún producto seleccionado';
             return;
         }
 
-        const filtrados = catalogoProductos.filter(p => 
-            p.nombre_producto.toLowerCase().includes(query) || 
-            (p.codigo_barras && p.codigo_barras.toLowerCase().includes(query))
-        ).slice(0, 10);
+        const filtrados = catalogoProductos.filter(p => {
+            const matchQuery = query === '' || p.nombre_producto.toLowerCase().includes(query) || (p.codigo_barras && p.codigo_barras.toLowerCase().includes(query));
+            const matchCategoria = idCategoriaFiltro === '' || p.id_categoria == idCategoriaFiltro;
+            return matchQuery && matchCategoria;
+        }).slice(0, 10);
 
         if (filtrados.length > 0) {
             filtrados.forEach(p => {
@@ -238,6 +256,13 @@ function configurarBuscadorProducto() {
             resultadosProducto.classList.add('d-none');
         }
     });
+
+    if (filtroCategoria) {
+        filtroCategoria.addEventListener('change', function() {
+            // Desencadenar la búsqueda al cambiar la categoría
+            buscadorProductosPOS.dispatchEvent(new Event('input'));
+        });
+    }
 }
 
 // 6. Manejo del Carrito
@@ -395,6 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     buscadorProductosPOS = document.getElementById('buscadorProductosPOS');
     resultadosProducto = document.getElementById('resultadosProducto');
+    filtroCategoria = document.getElementById('filtroCategoria');
     lblStockDisponible = document.getElementById('lblStockDisponible');
     lblProductoSeleccionado = document.getElementById('lblProductoSeleccionado');
     
@@ -426,6 +452,12 @@ document.addEventListener('DOMContentLoaded', () => {
         btnProcesar.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Procesando...';
         btnProcesar.disabled = true;
 
+        // Abrir ventana SÍNCRONAMENTE para evadir el bloqueador de ventanas emergentes
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+            printWindow.document.write('Generando factura, por favor espere...');
+        }
+
         fetch('../../controllers/FacturaController.php?action=procesar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -434,8 +466,22 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                window.location.reload();
+                // Redirigir la pestaña previamente abierta a la factura real
+                const urlImpresion = '../../controllers/FacturaController.php?action=imprimir&id=' + data.id_factura;
+                if (printWindow && data.id_factura) {
+                    printWindow.location.href = urlImpresion;
+                } else if (data.id_factura) {
+                    // Fallback si el navegador bloqueó todo
+                    window.location.href = urlImpresion;
+                    return; // No recargar si usamos la misma ventana
+                }
+                
+                // Pequeño delay para permitir que el popup navegue antes de recargar la principal
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             } else {
+                if (printWindow) printWindow.close();
                 Swal.fire('Error al Facturar', data.error || 'Error desconocido', 'error');
                 btnProcesar.innerHTML = 'CONFIRMAR VENTA';
                 btnProcesar.disabled = false;
@@ -443,6 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error(error);
+            if (printWindow) printWindow.close();
             Swal.fire('Error Crítico', 'Falló la comunicación con el servidor.', 'error');
             btnProcesar.innerHTML = 'CONFIRMAR VENTA';
             btnProcesar.disabled = false;

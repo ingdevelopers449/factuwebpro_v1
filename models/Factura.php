@@ -122,4 +122,55 @@ class Factura
             ];
         }
     }
+
+    public function obtenerFacturaPorId(int $id_factura): ?array
+    {
+        $queryFac = "
+            SELECT f.*, 
+                   c.nombre_razon_social as cliente_nombre, 
+                   c.identificacion as cliente_identificacion,
+                   e.razon_social as nombre_empresa,
+                   e.nit as empresa_nit,
+                   e.direccion as empresa_direccion,
+                   e.telefono as empresa_telefono,
+                   u.nombre as vendedor
+            FROM facturas f
+            LEFT JOIN clientes c ON f.id_cliente = c.id_cliente
+            LEFT JOIN empresa e ON f.id_empresa = e.id_empresa
+            LEFT JOIN usuarios u ON f.id_usuario = u.id_usuario
+            WHERE f.id_factura = ?
+        ";
+        $stmtFac = $this->conn->prepare($queryFac);
+        if ($stmtFac) {
+            $stmtFac->bind_param('i', $id_factura);
+            $stmtFac->execute();
+            $result = $stmtFac->get_result();
+            if ($row = $result->fetch_assoc()) {
+                return $row;
+            }
+        }
+        return null;
+    }
+
+    public function obtenerDetallesFactura(int $id_factura): array
+    {
+        $queryDet = "
+            SELECT d.*, p.nombre_producto, p.codigo_barras
+            FROM detalle_factura d
+            JOIN productos p ON d.id_producto = p.id_producto
+            WHERE d.id_factura = ?
+        ";
+        $stmtDet = $this->conn->prepare($queryDet);
+        if ($stmtDet) {
+            $stmtDet->bind_param('i', $id_factura);
+            $stmtDet->execute();
+            $result = $stmtDet->get_result();
+            $detalles = [];
+            while ($row = $result->fetch_assoc()) {
+                $detalles[] = $row;
+            }
+            return $detalles;
+        }
+        return [];
+    }
 }

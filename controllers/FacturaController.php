@@ -3,6 +3,7 @@ session_start();
 require_once __DIR__ . '/../models/Factura.php';
 require_once __DIR__ . '/../models/Clientes.php';
 require_once __DIR__ . '/../models/Productos.php';
+require_once __DIR__ . '/../models/Categoria.php';
 require_once __DIR__ . '/../models/VentaBorrador.php';
 
 class FacturaController
@@ -22,8 +23,10 @@ class FacturaController
         
         $clienteModel = new Cliente();
         $productoModel = new Producto();
+        $categoriaModel = new Categoria();
 
         $clientes = $clienteModel->obtenerTodos(); 
+        $categorias = $categoriaModel->obtenerTodas();
         
         $todosProductos = $productoModel->obtenerTodos();
         $productosVenta = array_filter($todosProductos, function($p) {
@@ -37,6 +40,7 @@ class FacturaController
         echo json_encode([
             'success' => true,
             'clientes' => array_values($clientes),
+            'categorias' => array_values($categorias),
             'productos' => array_values($productosVenta),
             'borrador' => $borrador
         ]);
@@ -151,6 +155,32 @@ class FacturaController
         exit;
     }
 
+    public function imprimir()
+    {
+        $id_factura = $_GET['id'] ?? 0;
+        
+        if (!$id_factura) {
+            die("ID de factura inválido.");
+        }
+
+        $facturaModel = new Factura();
+        $factura = $facturaModel->obtenerFacturaPorId((int)$id_factura);
+        
+        if (!$factura) {
+            die("Factura no encontrada.");
+        }
+
+        $detalles = $facturaModel->obtenerDetallesFactura((int)$id_factura);
+
+        // Formateador
+        $formatMoney = new NumberFormatter('es_CO', NumberFormatter::CURRENCY);
+        $formatMoney->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, 0);
+
+        // Cargar la vista (que ahora no tiene lógica de BD)
+        require_once __DIR__ . '/../views/admin/imprimir_factura.php';
+        exit;
+    }
+
     public function run()
     {
         $action = $_GET['action'] ?? '';
@@ -166,6 +196,8 @@ class FacturaController
         } elseif ($action === 'guardar_borrador') {
             header('Content-Type: application/json');
             $this->guardar_borrador();
+        } elseif ($action === 'imprimir') {
+            $this->imprimir();
         }
     }
 }

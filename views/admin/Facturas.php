@@ -9,24 +9,10 @@ $id_empresa = $_SESSION['usuario']['id_empresa'] ?? 1;
 $siguiente_numero = $facturaModel->obtenerSiguienteNumero($id_empresa);
 ?>
 
-<style>
-    /* Convertir el área principal en un contenedor sin scroll para que el POS se adapte a la pantalla */
-    .app-content {
-        overflow: hidden !important;
-        display: flex !important;
-        flex-direction: column !important;
-    }
-    
-    /* El contenedor del carrito será el único que tenga scroll */
-    #tablaCarrito_wrapper {
-        min-height: 150px;
-    }
-</style>
-
-<div class="container-fluid d-flex flex-column flex-grow-1 p-0" style="max-width: 1400px; width: 100%;">
+<div class="container-fluid py-4 d-flex flex-column" style="max-width: 1400px; width: 100%;">
     
     <!-- Encabezado POS (Premium UI) -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 glass-header p-4 rounded-4 shadow-sm">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 glass-header p-4 rounded-4 shadow-sm" style="position: sticky; top: 0; z-index: 1020;">
         <div>
             <h2 class="h3 fw-bold text-dark mb-1 text-uppercase" style="font-family: var(--font-heading);">
                 <i class="fa-solid fa-cash-register me-2" style="color: #f59e0b;"></i> <span style="color: #12102f;">Facturación POS</span>
@@ -92,14 +78,21 @@ $siguiente_numero = $facturaModel->obtenerSiguienteNumero($id_empresa);
                         <div class="p-4 pb-0">
                             <h5 class="pos-section-title">PRODUCTOS</h5>
                             
-                            <!-- Buscador de productos -->
-                            <div class="position-relative mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-box"></i></span>
-                                    <input type="text" id="buscadorProductosPOS" class="form-control bg-light border-start-0" placeholder="Código / nombre del producto..." autocomplete="off">
+                            <!-- Buscador y Filtro de productos -->
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-4">
+                                    <select id="filtroCategoria" class="form-select bg-light text-muted">
+                                        <option value="">Todas las categorías</option>
+                                    </select>
                                 </div>
-                                <!-- Dropdown de resultados de productos -->
-                                <div id="resultadosProducto" class="list-group position-absolute w-100 shadow d-none" style="z-index: 1000; max-height: 250px; overflow-y: auto;"></div>
+                                <div class="col-md-8 position-relative">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-box"></i></span>
+                                        <input type="text" id="buscadorProductosPOS" class="form-control bg-light border-start-0" placeholder="Código / nombre del producto..." autocomplete="off">
+                                    </div>
+                                    <!-- Dropdown de resultados de productos -->
+                                    <div id="resultadosProducto" class="list-group position-absolute w-100 shadow d-none" style="z-index: 1000; max-height: 250px; overflow-y: auto;"></div>
+                                </div>
                             </div>
                         </div>
 
@@ -133,7 +126,7 @@ $siguiente_numero = $facturaModel->obtenerSiguienteNumero($id_empresa);
 
             <!-- DERECHA: RESUMEN DE VENTA -->
             <div class="col-lg-4 d-flex flex-column">
-                <div class="card border-0 rounded-4 shadow-sm bg-white flex-grow-1 d-flex flex-column">
+                <div class="card border-0 rounded-4 shadow-sm bg-white d-flex flex-column h-auto" style="position: sticky; top: 120px;">
                     <div class="card-body d-flex flex-column p-4">
                         <h5 class="pos-section-title">RESUMEN DE VENTA</h5>
                         
@@ -192,6 +185,14 @@ $siguiente_numero = $facturaModel->obtenerSiguienteNumero($id_empresa);
                     <div class="mb-3">
                         <label class="form-label fw-semibold text-secondary small">Teléfono</label>
                         <input type="text" class="form-control bg-light" id="nc_telefono">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary small">Email</label>
+                        <input type="email" class="form-control bg-light" id="nc_email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary small">Dirección</label>
+                        <input type="text" class="form-control bg-light" id="nc_direccion">
                     </div>
                 </div>
                 <div class="modal-footer border-top bg-light px-4 py-3 rounded-bottom-4">

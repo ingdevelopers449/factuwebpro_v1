@@ -20,11 +20,13 @@ class Rentabilidad
                 COALESCE(SUM(d.cantidad * (d.precio_unitario_venta - d.precio_unitario_costo)), 0) as utilidad_neta
             FROM detalle_factura d
             JOIN facturas f ON d.id_factura = f.id_factura
-            WHERE DATE(f.fecha_emision) BETWEEN ? AND ?
+            WHERE f.fecha_emision >= ? AND f.fecha_emision <= ?
         ";
         $stmt = $this->conn->prepare($query);
         if ($stmt) {
-            $stmt->bind_param('ss', $fecha_inicio, $fecha_fin);
+            $inicio = $fecha_inicio . ' 00:00:00';
+            $fin = $fecha_fin . ' 23:59:59';
+            $stmt->bind_param('ss', $inicio, $fin);
             $stmt->execute();
             $result = $stmt->get_result();
             return $result->fetch_assoc();
@@ -44,13 +46,15 @@ class Rentabilidad
             JOIN facturas f ON d.id_factura = f.id_factura
             JOIN productos p ON d.id_producto = p.id_producto
             LEFT JOIN categorias c ON p.id_categoria = c.id_categoria
-            WHERE DATE(f.fecha_emision) BETWEEN ? AND ?
+            WHERE f.fecha_emision >= ? AND f.fecha_emision <= ?
             GROUP BY c.id_categoria, c.nombre_categoria
             ORDER BY utilidad DESC
         ";
         $stmt = $this->conn->prepare($query);
         if ($stmt) {
-            $stmt->bind_param('ss', $fecha_inicio, $fecha_fin);
+            $inicio = $fecha_inicio . ' 00:00:00';
+            $fin = $fecha_fin . ' 23:59:59';
+            $stmt->bind_param('ss', $inicio, $fin);
             $stmt->execute();
             $result = $stmt->get_result();
             $datos = [];
@@ -78,12 +82,14 @@ class Rentabilidad
             FROM facturas f
             LEFT JOIN clientes c ON f.id_cliente = c.id_cliente
             LEFT JOIN usuarios u ON f.id_usuario = u.id_usuario
-            WHERE DATE(f.fecha_emision) BETWEEN ? AND ?
+            WHERE f.fecha_emision >= ? AND f.fecha_emision <= ?
             ORDER BY f.fecha_emision DESC
         ";
         $stmt = $this->conn->prepare($query);
         if ($stmt) {
-            $stmt->bind_param('ss', $fecha_inicio, $fecha_fin);
+            $inicio = $fecha_inicio . ' 00:00:00';
+            $fin = $fecha_fin . ' 23:59:59';
+            $stmt->bind_param('ss', $inicio, $fin);
             $stmt->execute();
             $result = $stmt->get_result();
             $facturas = [];

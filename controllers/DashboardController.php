@@ -104,5 +104,5 @@ class DashboardController
             'grafica_valores' => $grafica_valores,
             'top_productos'   => $top_productos,
         ];
-    }
+    } 
 }

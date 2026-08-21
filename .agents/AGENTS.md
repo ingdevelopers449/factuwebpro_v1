@@ -5,7 +5,7 @@
 - **DB:** MySQL · driver `mysqli` · sentencias preparadas (`prepare()`) **obligatorias**
 - **Servidor dev:** `php -S localhost:8080` desde raíz del proyecto
 - **Zona horaria global:** `America/Bogota` — establecida en `config/database.php`
-- **Frontend:** Bootstrap 5.3 + FontAwesome 6.5 + SweetAlert2 + Chart.js
+- **Frontend:** Bootstrap 5.3.8 (Local) + FontAwesome 6.5 + SweetAlert2 + Chart.js
 - **PDF/impresión:** `window.print()` nativo (sin librería externa)
 - **Autenticación:** Sesiones PHP (`$_SESSION['usuario']`)
 
@@ -144,6 +144,10 @@ detalle_factura(id_detalle, id_factura FK CASCADE, id_producto FK,
 ventas_borrador(id_borrador, id_usuario UNIQUE FK, id_cliente FK NULL, fecha_actualizacion)
 detalle_borrador(id_detalle_borrador, id_borrador FK CASCADE, id_producto FK, cantidad)
 ```
+
+**Seed de Datos Inicial (DB-FACTUWEBPRO.sql):**
+- **Usuario Admin:** `admin@factuweb.com` / `admin123`
+- **Roles y Empresa:** Ya preconfigurados.
 
 ---
 

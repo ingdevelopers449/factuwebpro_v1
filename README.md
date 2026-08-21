@@ -131,7 +131,9 @@ factuwebpro/
 │   ├── 06_PROCESOS_ALGORITMICOS.md
 │   ├── 07_MODULOS.md
 │   ├── 08_RELACION_FRONTEND_BACKEND_NEGOCIO.md
-│   └── 09_GUIA_DIAGNOSTICO_IA.md
+│   ├── 09_GUIA_DIAGNOSTICO_IA.md
+│   ├── 10_DIAGRAMA_CLASES.md
+│   └── 11_GUIA_PROCESOS.md
 └── sql/
     └── DB-FACTUWEBPRO.sql    # Schema completo
 ```
@@ -159,7 +161,7 @@ El sistema usa un **design system propio** con las siguientes variables:
 | Administrador (`id_rol=1`) | Acceso total al sistema | `views/admin/dashboard.php` |
 | Empleado (`id_rol=2`) | Solo facturación, clientes e historial propio | `views/seller/mis_ventas.php` |
 
-> ⚠️ Crea los usuarios directamente en la base de datos con `password_hash` usando `PASSWORD_BCRYPT`.
+> 🔑 **Credenciales por defecto:** `admin@factuweb.com` / `admin123` (Rol: Administrador). Generado automáticamente por el script SQL.
 
 ---
 

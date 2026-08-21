@@ -44,7 +44,6 @@
                 <div class="mb-4">
                     <label class="form-label form-label-dark">
                         <span>Contraseña</span>
-                        <a href="#">¿Olvidaste tu contraseña?</a>
                     </label>
                     <div class="input-dark-wrapper position-relative">
                         <div class="input-dark-icon">
@@ -66,10 +65,17 @@
                 </div>
 
                 <!-- Botón Ingresar -->
-                <button type="submit" class="btn btn-auth-submit w-100 mb-4 mt-2">
+                <button type="submit" class="btn btn-auth-submit w-100 mb-3 mt-2">
                     Iniciar Sesión <i class="fa-solid fa-arrow-right-to-bracket ms-2"></i>
                 </button>
             </form>
+
+            <!-- Link recuperación FUERA del form para evitar validación accidental -->
+            <div class="text-center mt-2">
+                <a href="recovery.php" class="text-decoration-none" style="color: rgba(255,255,255,0.55); font-size: 0.85rem;">
+                    <i class="fa-solid fa-key me-1"></i> ¿Olvidaste tu contraseña?
+                </a>
+            </div>
         </div>
     </div>
     <script>

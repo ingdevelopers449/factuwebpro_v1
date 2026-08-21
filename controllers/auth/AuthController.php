@@ -74,7 +74,7 @@ class AuthController
 
         if (!password_verify($password, $usuario['password_hash'])) {
             $usuarioModel->registrarIntentoFallido($usuario['id_usuario'], $usuario['intentos_fallidos'] ?? 0);
-            
+
             $intentos_restantes = 2 - ($usuario['intentos_fallidos'] ?? 0);
             if ($intentos_restantes <= 0) {
                 $mensaje = 'Su cuenta ha sido bloqueada por seguridad. Espere 15 minutos.';
@@ -169,8 +169,8 @@ class AuthController
 
         if ($usuarioModel->guardarTokenRecuperacion($email, $token, $expiracion)) {
             // Simulamos envío de correo guardando el link temporal (en producción se usa PHPMailer)
-            $link = "http://localhost/factuwebpro/views/auth/reset_password.php?token=" . $token;
-            
+            $link = 'http://localhost/factuwebpro/views/auth/reset_password.php?token=' . $token;
+
             $_SESSION['alert'] = [
                 'icon' => 'success',
                 'title' => 'Enlace enviado',

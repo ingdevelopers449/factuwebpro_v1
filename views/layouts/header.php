@@ -78,41 +78,77 @@ if ($rol == 2) {
         <!-- Main Wrapper -->
         <div class="app-main flex-grow-1 d-flex flex-column overflow-hidden">
             <!-- Topbar -->
-            <header class="app-topbar d-flex justify-content-between align-items-center px-3 bg-white border-bottom shadow-sm z-1" style="height: 80px; min-height: 80px;">
-                <button class="btn btn-light d-md-none" id="toggleSidebar">
+            <?php
+                $usuario_nombre = $_SESSION['usuario']['nombre'] ?? 'Usuario';
+                $usuario_inicial = strtoupper(substr($usuario_nombre, 0, 1));
+                $id_rol_actual = $_SESSION['usuario']['id_rol'] ?? 0;
+                $nombre_rol  = ($id_rol_actual == '1') ? 'Administrador' : 'Empleado';
+                $color_rol   = ($id_rol_actual == '1') ? '#ea580c' : '#10b981';
+
+                // Mapa de breadcrumbs por página
+                $breadcrumb_map = [
+                    'dashboard.php'         => [['icono'=>'fa-chart-pie',              'label'=>'Dashboard']],
+                    'facturas.php'          => [['icono'=>'fa-file-invoice-dollar',    'label'=>'Ventas'], ['icono'=>'fa-cash-register', 'label'=>'Facturación POS']],
+                    'clientes.php'          => [['icono'=>'fa-file-invoice-dollar',    'label'=>'Ventas'], ['icono'=>'fa-users',         'label'=>'Clientes']],
+                    'imprimir_factura.php'  => [['icono'=>'fa-file-invoice-dollar',    'label'=>'Ventas'], ['icono'=>'fa-print',         'label'=>'Imprimir Factura']],
+                    'categorias.php'        => [['icono'=>'fa-box-open',               'label'=>'Catálogo'], ['icono'=>'fa-tags',        'label'=>'Categorías']],
+                    'productos.php'         => [['icono'=>'fa-box-open',               'label'=>'Catálogo'], ['icono'=>'fa-box-open',    'label'=>'Productos']],
+                    'gempleados.php'        => [['icono'=>'fa-user-shield',            'label'=>'Administración'], ['icono'=>'fa-user-shield','label'=>'Empleados']],
+                    'empresa.php'           => [['icono'=>'fa-building',               'label'=>'Administración'], ['icono'=>'fa-building',   'label'=>'Empresa']],
+                    'parametrizacion.php'   => [['icono'=>'fa-building-columns',       'label'=>'Administración'], ['icono'=>'fa-building-columns','label'=>'Parametrización DIAN']],
+                    'rentabilidad.php'      => [['icono'=>'fa-chart-line',             'label'=>'Reportes'], ['icono'=>'fa-chart-line',  'label'=>'Ventas y Rentabilidad']],
+                    'mis_ventas.php'        => [['icono'=>'fa-list-check',             'label'=>'Mis Ventas']],
+                ];
+                $current_page_key = basename($_SERVER['SCRIPT_NAME']);
+                $breadcrumbs = $breadcrumb_map[$current_page_key] ?? [['icono'=>'fa-house', 'label'=>'Inicio']];
+            ?>
+            <header class="app-topbar d-flex justify-content-between align-items-center px-4 bg-white border-bottom shadow-sm z-1" style="height: 80px; min-height: 80px;">
+                <!-- Botón toggle sidebar móvil -->
+                <button class="btn btn-light d-md-none me-2" id="toggleSidebar">
                     <i class="fa-solid fa-bars"></i>
                 </button>
-                
-                <!-- Buscador -->
-                <div class="d-none d-md-flex align-items-center ms-3">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
-                        <input type="text" class="form-control bg-light border-0 shadow-none" placeholder="Buscar facturas o clientes..." style="width: 250px;">
-                    </div>
-                </div>
 
-                <!-- Perfil y Notificaciones -->
-                <div class="ms-auto d-flex align-items-center gap-3">
-                    <a href="#" class="text-secondary fs-5 position-relative me-2">
-                        <i class="fa-solid fa-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                            <span class="visually-hidden">Nuevas alertas</span>
-                        </span>
-                    </a>
-                    
-                    <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-bs-toggle="dropdown">
-                            <div class="bg-primary bg-gradient text-white rounded-circle d-flex align-items-center justify-content-center me-2 shadow-sm" style="width: 35px; height: 35px; font-weight: bold;">
-                                <?php echo strtoupper(substr($_SESSION['usuario']['usuario'] ?? 'A', 0, 1)); ?>
-                            </div>
-                            <span class="d-none d-md-inline fw-semibold"><?php echo $_SESSION['usuario']['usuario'] ?? 'Administrador'; ?></span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
-                            <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-user me-2 text-secondary"></i> Mi Perfil</a></li>
-                            <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-gear me-2 text-secondary"></i> Configuración</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item py-2 text-danger fw-bold" href="../../controllers/auth/AuthController.php?accion=logout"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Cerrar Sesión</a></li>
-                        </ul>
+                <!-- Breadcrumb dinámico -->
+                <nav aria-label="breadcrumb" class="d-none d-md-flex align-items-center">
+                    <ol class="breadcrumb mb-0 align-items-center">
+                        <!-- Inicio siempre primero -->
+                        <li class="breadcrumb-item">
+                            <a href="<?php echo ($id_rol_actual == '2') ? '../../views/seller/mis_ventas.php' : '../../views/admin/dashboard.php'; ?>"
+                               class="text-decoration-none d-flex align-items-center gap-1"
+                               style="color:#12102f;">
+                                <i class="fa-solid fa-house" style="font-size:.8rem;"></i>
+                                <span style="font-size:.83rem;">FactuWeb PRO</span>
+                            </a>
+                        </li>
+                        <?php foreach ($breadcrumbs as $i => $crumb): ?>
+                            <?php $is_last = ($i === count($breadcrumbs) - 1); ?>
+                            <li class="breadcrumb-item <?php echo $is_last ? 'active' : ''; ?>"
+                                <?php if ($is_last) echo 'aria-current="page"'; ?>>
+                                <?php if ($is_last): ?>
+                                    <span class="d-flex align-items-center gap-1 fw-semibold" style="color:#ea580c; font-size:.85rem;">
+                                        <i class="fa-solid <?php echo htmlspecialchars($crumb['icono']); ?>" style="font-size:.78rem;"></i>
+                                        <?php echo htmlspecialchars($crumb['label']); ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span class="text-muted d-flex align-items-center gap-1" style="font-size:.83rem;">
+                                        <i class="fa-solid <?php echo htmlspecialchars($crumb['icono']); ?>" style="font-size:.75rem;"></i>
+                                        <?php echo htmlspecialchars($crumb['label']); ?>
+                                    </span>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ol>
+                </nav>
+
+                <!-- Perfil de usuario (estático) -->
+                <div class="d-flex align-items-center gap-3 ms-auto">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm text-white fw-bold flex-shrink-0"
+                         style="width:40px;height:40px;background:linear-gradient(135deg,#12102f,#ea580c);font-size:1rem;">
+                        <?php echo $usuario_inicial; ?>
+                    </div>
+                    <div class="d-none d-md-block lh-sm">
+                        <div class="fw-semibold text-dark" style="font-size:.9rem;"><?php echo htmlspecialchars($usuario_nombre); ?></div>
+                        <span class="badge rounded-pill px-2" style="background-color:<?php echo $color_rol; ?>; font-size:.68rem;"><?php echo $nombre_rol; ?></span>
                     </div>
                 </div>
             </header>

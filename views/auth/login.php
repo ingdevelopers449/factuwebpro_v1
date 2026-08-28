@@ -27,7 +27,7 @@
                 <p class="auth-subtitle">Ingresa tus credenciales para acceder al sistema</p>
             </div>
 
-            <form action="../../controllers/auth/AuthController.php?accion=login" method="POST">
+            <form id="loginForm" action="../../controllers/auth/AuthController.php?accion=login" method="POST">
                 
                 <!-- Email -->
                 <div class="mb-4">
@@ -89,6 +89,18 @@
                 passwordInput.setAttribute('type', type);
                 this.querySelector('i').classList.toggle('fa-eye');
                 this.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+        }
+
+        // Prevenir múltiples clics al iniciar sesión (Problema de concurrencia)
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function() {
+                const btn = this.querySelector('button[type="submit"]');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin me-2"></i> Procesando...';
+                }
             });
         }
     </script>

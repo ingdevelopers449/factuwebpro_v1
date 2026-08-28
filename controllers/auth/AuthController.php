@@ -22,6 +22,12 @@ class AuthController
 {
     public function login()
     {
+        // Si ya hay una sesión activa, lo mandamos al dashboard directamente para evitar reprocesos
+        if (isset($_SESSION['usuario'])) {
+            $destino = ($_SESSION['usuario']['id_rol'] == 1) ? '../../views/admin/dashboard.php' : '../../views/seller/mis_ventas.php';
+            header('Location: ' . $destino);
+            exit;
+        }
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ../../views/auth/login.php');
             exit;

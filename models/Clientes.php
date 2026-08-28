@@ -1,6 +1,16 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 
+/**
+ * MODELO DE CLIENTES
+ * 
+ * ¿Para qué funciona?
+ * Interactúa con la tabla `clientes`. Maneja todo el CRUD (Crear, Leer, Actualizar, Borrar) y validaciones de clientes (como buscar si existe un NIT o identificación duplicada).
+ * 
+ * Conexión a los Controladores:
+ * 1. `ClientesController` lo usa para la gestión completa desde la tabla de administración.
+ * 2. `FacturaController` lo usa durante el Punto de Venta (POS) para traer la lista de clientes al buscador del modal de facturación, o para crear clientes al vuelo mediante peticiones AJAX.
+ */
 class Cliente
 {
     private $conn;

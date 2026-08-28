@@ -2,6 +2,19 @@
 require_once __DIR__ . '/../models/Factura.php';
 require_once __DIR__ . '/../config/database.php';
 
+/**
+ * CONTROLADOR DEL DASHBOARD
+ * 
+ * ¿Para qué funciona?
+ * Recopila todas las métricas, KPIs y gráficos que se muestran en la pantalla principal del Administrador.
+ * 
+ * Conexión a la Vista:
+ * 1. 'views/admin/dashboard.php' lo instancia de forma directa (a diferencia de otros, este no usa peticiones asíncronas GET/POST para su carga inicial) y llama a $ctrl->index().
+ * 2. La vista usa la función nativa de PHP `extract($data)` para desempaquetar el arreglo devuelto y convertir sus claves en variables independientes ($total_clientes, $ventas_hoy, etc.).
+ * 
+ * Conexión al Modelo:
+ * - Instancia modelos de negocio o ejecuta sentencias SQL (requiriendo `database.php`) para hacer cálculos pesados como SUM(total_pagar) o buscar productos sin stock.
+ */
 class DashboardController
 {
     public function index(int $pagina_facturas = 1, int $por_pagina = 8): array

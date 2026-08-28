@@ -4,6 +4,19 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/../models/Categoria.php';
 
+/**
+ * CONTROLADOR DE CATEGORÍAS
+ * 
+ * ¿Para qué funciona?
+ * Este controlador maneja toda la lógica relacionada con las categorías de productos (Crear, Editar, Listar, Activar/Desactivar).
+ * 
+ * Conexión a la Vista:
+ * 1. La vista 'views/admin/categorias.php' lo incluye y llama a $ctrl->index() para mostrar la tabla.
+ * 2. Los formularios HTML de la vista envían datos por POST a las URL: '?action=guardar' o '?action=cambiar_estado'.
+ * 
+ * Conexión al Modelo:
+ * - Instancia el modelo `Categoria` (models/Categoria.php) para enviar las instrucciones a la base de datos (INSERT, UPDATE, SELECT).
+ */
 class CategoriaController
 {
     private function setAlert(string $icon, string $title, string $text)

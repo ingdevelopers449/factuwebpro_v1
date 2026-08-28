@@ -4,6 +4,20 @@ session_start();
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../models/Usuario.php';
 
+/**
+ * CONTROLADOR DE AUTENTICACIÓN
+ * 
+ * ¿Para qué funciona?
+ * Maneja el inicio de sesión, cierre de sesión, bloqueos por intentos fallidos y recuperación de contraseña.
+ * 
+ * Conexión a la Vista:
+ * 1. 'views/auth/login.php' envía el correo y contraseña hacia '?accion=login'.
+ * 2. 'views/auth/recovery.php' envía la petición de restablecimiento hacia '?accion=forgot_password'.
+ * 3. Si hay éxito, redirige a 'dashboard.php' (Admin) o 'mis_ventas.php' (Empleado).
+ * 
+ * Conexión al Modelo:
+ * - Se comunica exclusivamente con el modelo `Usuario` para validar credenciales, sumar intentos fallidos y guardar tokens temporales.
+ */
 class AuthController
 {
     public function login()

@@ -2,6 +2,19 @@
 session_start();
 require_once __DIR__ . '/../models/Clientes.php';
 
+/**
+ * CONTROLADOR DE CLIENTES
+ * 
+ * ¿Para qué funciona?
+ * Controla las operaciones de los clientes (Crear, Leer, Actualizar, Eliminar).
+ * 
+ * Conexión a la Vista:
+ * 1. 'views/admin/clientes.php' lo requiere y usa $ctrl->index() para renderizar la tabla de clientes.
+ * 2. Recibe las acciones POST ('?action=guardar', '?action=eliminar') desde los modales SweetAlert y formularios HTML de la vista.
+ * 
+ * Conexión al Modelo:
+ * - Se comunica exclusivamente con el modelo `Cliente` (models/Clientes.php) para guardar o consultar en la tabla `clientes`.
+ */
 class ClientesController
 {
     private function setAlert(string $icon, string $title, string $text)

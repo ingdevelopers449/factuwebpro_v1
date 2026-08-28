@@ -2,6 +2,19 @@
 session_start();
 require_once __DIR__ . '/../models/Empresa.php';
 
+/**
+ * CONTROLADOR DE EMPRESA
+ * 
+ * ¿Para qué funciona?
+ * Gestiona los datos legales y el logo de la empresa dueña del software.
+ * 
+ * Conexión a la Vista:
+ * 1. 'views/admin/empresa.php' llama a $ctrl->index() para precargar el formulario con los datos si ya existen.
+ * 2. El formulario de la vista envía los datos (incluyendo la imagen del logo) por POST hacia '?action=guardar'.
+ * 
+ * Conexión al Modelo:
+ * - Instancia `Empresa` (models/Empresa.php) para crear o actualizar el registro único de la tabla `empresa`.
+ */
 class EmpresaController
 {
     private function setAlert(string $icon, string $title, string $text)

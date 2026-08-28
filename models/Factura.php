@@ -1,6 +1,18 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 
+/**
+ * MODELO DE FACTURA (Transaccional)
+ * 
+ * ¿Para qué funciona?
+ * Es el modelo más complejo del sistema. Interactúa con múltiples tablas simultáneamente (`facturas`, `detalle_factura`, `resolucion_dian`, `productos`).
+ * Implementa "Transacciones MySQL" (`begin_transaction`, `commit`, `rollback`) para garantizar que si falla el descuento de un inventario, NO se cree la factura (Previene bases de datos corruptas).
+ * 
+ * Conexión a los Controladores:
+ * 1. `FacturaController` lo usa exclusivamente en el momento crítico de "Procesar Venta" y "Generar PDF".
+ * 2. `DashboardController` y `RentabilidadController` lo usan indirectamente a través de consultas SQL para extraer KPIs de ventas brutas.
+ * 3. Contiene la lógica de simulación DIAN (Generación de CUFE y QR).
+ */
 class Factura
 {
     private \mysqli $conn;

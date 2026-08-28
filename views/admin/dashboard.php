@@ -3,7 +3,7 @@ $current_page = 'dashboard.php';
 require_once '../../controllers/DashboardController.php';
 
 $ctrl = new DashboardController();
-$pagina_facturas = max(1, (int)($_GET['factura_page'] ?? 1));
+$pagina_facturas = max(1, (int) ($_GET['factura_page'] ?? 1));
 $data = $ctrl->index($pagina_facturas, 8);
 extract($data);
 
@@ -142,20 +142,20 @@ require_once '../layouts/header.php';
                         <p class="text-muted small text-center py-4">Sin ventas registradas aún.</p>
                     <?php else: ?>
                         <?php
-                            $max_vendido = max(array_column($top_productos, 'total_vendido'));
+                        $max_vendido = max(array_column($top_productos, 'total_vendido'));
                         ?>
                         <?php foreach ($top_productos as $i => $prod): ?>
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <span class="small fw-semibold text-dark text-truncate" style="max-width:75%;">
-                                        <span class="badge rounded-pill me-1" style="background:#12102f; font-size:.65rem;"><?= $i+1 ?></span>
+                                        <span class="badge rounded-pill me-1" style="background:#12102f; font-size:.65rem;"><?= $i + 1 ?></span>
                                         <?= htmlspecialchars($prod['nombre_producto']) ?>
                                     </span>
                                     <span class="small text-muted fw-bold"><?= $prod['total_vendido'] ?> uds.</span>
                                 </div>
                                 <div class="progress rounded-pill" style="height:6px;">
                                     <div class="progress-bar rounded-pill"
-                                         style="width:<?= round($prod['total_vendido']/$max_vendido*100) ?>%; background:linear-gradient(90deg,#ea580c,#f59e0b);">
+                                         style="width:<?= round($prod['total_vendido'] / $max_vendido * 100) ?>%; background:linear-gradient(90deg,#ea580c,#f59e0b);">
                                     </div>
                                 </div>
                             </div>
@@ -225,7 +225,7 @@ require_once '../layouts/header.php';
                                 <?= $fmt->format($f['total_pagar']) ?>
                             </td>
                             <td class="py-3">
-                                <a href="imprimir_factura.php?id=<?= $f['id_factura'] ?>"
+                                <a href="../../controllers/FacturaController.php?action=imprimir&id=<?= $f['id_factura'] ?>"
                                    class="btn btn-sm btn-outline-secondary rounded-pill" target="_blank" title="Ver factura">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>

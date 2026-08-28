@@ -1,6 +1,16 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 
+/**
+ * MODELO DE CATEGORÍAS
+ * 
+ * ¿Para qué funciona?
+ * Representa la tabla `categorias` en la base de datos. Su único trabajo es ejecutar consultas SQL seguras (Consultar, Insertar, Actualizar) usando sentencias preparadas.
+ * 
+ * Conexión a los Controladores:
+ * 1. `CategoriaController` lo instancia para listar las categorías en la vista de administración o guardar nuevas.
+ * 2. `ProductosController` lo instancia para obtener la lista activa de categorías y rellenar el menú desplegable (Select) al crear un producto.
+ */
 class Categoria
 {
     private \mysqli $conn;

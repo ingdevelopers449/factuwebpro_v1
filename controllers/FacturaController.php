@@ -6,6 +6,22 @@ require_once __DIR__ . '/../models/Productos.php';
 require_once __DIR__ . '/../models/Categoria.php';
 require_once __DIR__ . '/../models/VentaBorrador.php';
 
+/**
+ * CONTROLADOR DE FACTURACIÓN (POS)
+ * 
+ * ¿Para qué funciona?
+ * Es el cerebro del Punto de Venta. Se encarga de procesar las ventas en tiempo real, guardar el carrito en un borrador temporal y procesar la facturación definitiva con validaciones tipo DIAN.
+ * 
+ * Conexión a la Vista:
+ * 1. 'views/admin/facturas.php' (y el archivo js 'public/js/facturas.js') se comunican con él mediante peticiones AJAX (fetch) solicitando datos en formato JSON (ej. '?action=init_pos').
+ * 2. No devuelve código HTML. Todo lo que devuelve son respuestas JSON (`echo json_encode()`) para que JavaScript actualice la vista sin recargar la página.
+ * 3. La única excepción es '?action=imprimir', que recibe el ID de factura e incrusta la vista 'imprimir_factura.php' directamente para generar el PDF.
+ * 
+ * Conexión a los Modelos:
+ * - `Factura`: Para ejecutar la transacción principal de venta (descontar stock, sumar resolución, registrar cabecera y detalle).
+ * - `Cliente`, `Producto`, `Categoria`: Para enviarle al POS (Frontend) los datos disponibles para vender y facturar.
+ * - `VentaBorrador`: Para persistir el carrito temporalmente en caso de que el vendedor cierre la pestaña.
+ */
 class FacturaController
 {
     private function setAlert(string $icon, string $title, string $text)

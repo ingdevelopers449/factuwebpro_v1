@@ -1,7 +1,23 @@
 <?php
 session_start();
 require_once __DIR__ . '/../models/Productos.php';
+require_once __DIR__ . '/../models/Categoria.php';
 
+/**
+ * CONTROLADOR DE PRODUCTOS
+ * 
+ * ¿Para qué funciona?
+ * Gestiona todo el catálogo (creación, edición, listado, paginación, subida de imágenes y activación).
+ * 
+ * Conexión a la Vista:
+ * 1. 'views/admin/productos.php' solicita los datos usando $ctrl->index($pagina, $busqueda).
+ * 2. La vista envía un formulario multipart/form-data (para la imagen) hacia '?action=guardar'.
+ * 3. Procesa advertencias si la vista detecta márgenes negativos y el usuario confirma guardarlo.
+ * 
+ * Conexión al Modelo:
+ * - Instancia `Producto` (models/Productos.php) para interactuar con la DB.
+ * - Instancia `Categoria` (models/Categoria.php) para enviarle a la vista la lista de categorías (necesarias para el <select> al crear un producto).
+ */
 class ProductosController
 {
     private function setAlert(string $icon, string $title, string $text)

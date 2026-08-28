@@ -1,6 +1,17 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 
+/**
+ * MODELO DE USUARIOS (Autenticación y Seguridad)
+ * 
+ * ¿Para qué funciona?
+ * Gestiona toda la capa de seguridad en la base de datos (tabla `usuarios`).
+ * Verifica contraseñas (`password_verify`), cuenta los intentos fallidos, bloquea cuentas, y genera tokens de recuperación.
+ * 
+ * Conexión a los Controladores:
+ * 1. `AuthController` lo usa intensivamente para validar los inicios de sesión, registrar accesos fallidos y cambiar contraseñas mediante tokens.
+ * 2. `EditUsuarioController` y `RegisterUsuarioAdmin` lo usan para crear nuevos empleados o modificar los permisos/comisiones desde el panel del Administrador.
+ */
 class Usuario
 {
     private \mysqli $conn;

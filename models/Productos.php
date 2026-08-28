@@ -1,6 +1,17 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 
+/**
+ * MODELO DE PRODUCTOS
+ * 
+ * ¿Para qué funciona?
+ * Se encarga de la tabla `productos`. Es crucial para la lógica de inventario, actualización de stock y validación de precios (costo vs venta).
+ * 
+ * Conexión a los Controladores:
+ * 1. `ProductosController` lo utiliza para el CRUD general (crear productos, actualizar precios/imágenes, buscar por nombre o código).
+ * 2. `FacturaController` (POS) lo requiere constantemente para verificar existencias y descontar el `stock_actual` al confirmar una venta.
+ * 3. `DashboardController` lo invoca para calcular alertas de stock bajo y mostrar los productos más vendidos.
+ */
 class Producto
 {
     private mysqli $conn;

@@ -27,25 +27,29 @@ $_SESSION['last_activity'] = time();
 // --- Control de Acceso por Roles (RBAC) ---
 $rol = $_SESSION['usuario']['id_rol'] ?? 0;
 $script_name = basename($_SERVER['SCRIPT_NAME']);
+$current_dir = basename(dirname($_SERVER['SCRIPT_NAME'])); // 'admin', 'seller', etc.
 
-// Módulos que el vendedor (rol 2) TIENE permitido visitar (compartidos con admin)
-$modulos_permitidos_vendedor = [
-    'facturas.php', 
-    'imprimir_factura.php', 
-    'clientes.php', 
-    'mis_ventas.php'
-];
+// 1. Bloquear a Empleado (rol 2) si intenta entrar a la carpeta 'admin'
+if ($rol == 2 && $current_dir === 'admin') {
+    $_SESSION['alert'] = [
+        'icon' => 'error',
+        'title' => 'Acceso Denegado',
+        'text' => 'No tienes permisos de Administrador.'
+    ];
+    header('Location: ../../views/seller/mis_ventas.php');
+    exit;
+}
 
-if ($rol == 2) {
-    if (!in_array($script_name, $modulos_permitidos_vendedor)) {
-        $_SESSION['alert'] = [
-            'icon' => 'error',
-            'title' => 'Acceso Denegado',
-            'text' => 'No tienes los permisos necesarios para ver este módulo.'
-        ];
-        header('Location: ../../views/seller/mis_ventas.php');
-        exit;
-    }
+// 2. Bloquear a Admin (rol 1) si intenta entrar a la carpeta 'seller'
+// (Aunque el Admin es superior, sus vistas oficiales están en /admin/)
+if ($rol == 1 && $current_dir === 'seller') {
+    $_SESSION['alert'] = [
+        'icon' => 'warning',
+        'title' => 'Redirección',
+        'text' => 'Los administradores operan desde el panel principal.'
+    ];
+    header('Location: ../../views/admin/dashboard.php');
+    exit;
 }
 ?>
 <!DOCTYPE html>

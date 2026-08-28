@@ -10,7 +10,7 @@
         
         <li class="nav-item px-3 mt-2 mb-2 text-white-50 small fw-bold text-uppercase" style="letter-spacing: 1px;">Punto de Venta</li>
         <li class="nav-item">
-            <a href="../../views/admin/facturas.php" class="nav-link <?php echo ($current_page == 'facturas.php') ? 'active' : ''; ?>">
+            <a href="../../views/seller/facturas.php" class="nav-link <?php echo ($current_page == 'facturas.php') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-cash-register"></i> Facturar (POS)
             </a>
         </li>
@@ -20,7 +20,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="../../views/admin/clientes.php" class="nav-link <?php echo ($current_page == 'clientes.php') ? 'active' : ''; ?>">
+            <a href="../../views/seller/clientes.php" class="nav-link <?php echo ($current_page == 'clientes.php') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-users"></i> Clientes
             </a>
         </li>

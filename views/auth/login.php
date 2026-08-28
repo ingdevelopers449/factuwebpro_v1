@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -106,7 +107,7 @@
     </script>
 
     <!-- SweetAlert Global -->
-    <?php session_start(); if (isset($_SESSION['alert'])): ?>
+    <?php if (isset($_SESSION['alert'])): ?>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {

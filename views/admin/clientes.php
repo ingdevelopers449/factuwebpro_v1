@@ -79,7 +79,7 @@ require_once '../layouts/header.php';
                                                 <i class="fa-regular fa-eye"></i>
                                             </button>
                                             <!-- Botón Editar -->
-                                            <button class="btn btn-sm btn-light border text-primary" title="Editar" onclick='EditarModalEditar(<?= json_encode($cliente) ?>)'>
+                                            <button class="btn btn-sm btn-light border text-primary" title="Editar" onclick='abrirModalEditar(<?= json_encode($cliente) ?>)'>
                                                 <i class="fa-solid fa-pen"></i>
                                             </button>
                                             <!-- Botón Eliminar (Implementación futura segura) -->
@@ -238,7 +238,11 @@ require_once '../layouts/header.php';
         clienteModal.show();
     }
 
-    window.abrirModalEditar = function(usuarios) {
+
+    // PRINCIPAL ERROR ECONTRADO MODELO USUARIOS NO CONCUERDA CON SU BASE DE DATOS
+    
+
+    window.abrirModalEditar = function(cliente) {
         // Llenar campos
         inputId.value = cliente.id_cliente;
         inputIdentificacion.value = cliente.identificacion;

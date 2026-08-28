@@ -1,11 +1,11 @@
-<?php 
+<?php
 // Vista de Clientes
 require_once '../../controllers/ClientesController.php';
 
 $controller = new ClientesController();
 extract($controller->index());
 
-require_once '../layouts/header.php'; 
+require_once '../layouts/header.php';
 ?>
 
 <div class="container-fluid py-4">
@@ -79,7 +79,7 @@ require_once '../layouts/header.php';
                                                 <i class="fa-regular fa-eye"></i>
                                             </button>
                                             <!-- Botón Editar -->
-                                            <button class="btn btn-sm btn-light border text-primary" title="Editar" onclick='abrirModalEditar(<?= json_encode($cliente) ?>)'>
+                                            <button class="btn btn-sm btn-light border text-primary" title="Editar" onclick='EditarModalEditar(<?= json_encode($cliente) ?>)'>
                                                 <i class="fa-solid fa-pen"></i>
                                             </button>
                                             <!-- Botón Eliminar (Implementación futura segura) -->
@@ -238,7 +238,7 @@ require_once '../layouts/header.php';
         clienteModal.show();
     }
 
-    window.abrirModalEditar = function(cliente) {
+    window.abrirModalEditar = function(usuarios) {
         // Llenar campos
         inputId.value = cliente.id_cliente;
         inputIdentificacion.value = cliente.identificacion;

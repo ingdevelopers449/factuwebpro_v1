@@ -43,7 +43,7 @@ $formatMoney->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, 0);
             <button class="btn btn-outline-secondary rounded-pill shadow-sm" onclick="window.print()">
                 <i class="fa-solid fa-print me-1"></i> Imprimir Reporte
             </button>
-            <a href="facturas.php" class="btn btn-super-cta text-white rounded-pill shadow-sm px-4">
+            <a href="../admin/Facturas.php" class="btn btn-super-cta text-white rounded-pill shadow-sm px-4">
                 <i class="fa-solid fa-plus me-1"></i> Nueva Venta
             </a>
         </div>

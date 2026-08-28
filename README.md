@@ -133,7 +133,8 @@ factuwebpro/
 │   ├── 08_RELACION_FRONTEND_BACKEND_NEGOCIO.md
 │   ├── 09_GUIA_DIAGNOSTICO_IA.md
 │   ├── 10_DIAGRAMA_CLASES.md
-│   └── 11_GUIA_PROCESOS.md
+│   ├── 11_GUIA_PROCESOS.md
+│   └── 12_GUIA_ANTI_SABOTAJE.md
 └── sql/
     └── DB-FACTUWEBPRO.sql    # Schema completo
 ```
@@ -206,6 +207,7 @@ La carpeta [`documentació logica`](documentació%20logica/00_INDICE.md) contien
 | [Guía de diagnóstico para IA](documentació%20logica/09_GUIA_DIAGNOSTICO_IA.md) | Pasos para encontrar y corregir errores |
 | [Diagrama de clases](documentació%20logica/10_DIAGRAMA_CLASES.md) | Diagrama de clases y métodos de las entidades |
 | [Guía de procesos](documentació%20logica/11_GUIA_PROCESOS.md) | Guía rápida de los procesos del sistema |
+| [Guía anti-sabotaje](documentació%20logica/12_GUIA_ANTI_SABOTAJE.md) | Cómo sobrevivir a la evaluación identificando errores intencionales |
 
 ---
 

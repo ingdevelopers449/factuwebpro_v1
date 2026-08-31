@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/../models/empresa.php';
+require_once __DIR__ . '/../models/Empresa.php';
 require_once __DIR__ . '/../models/ResolucionDian.php';
 
 class ParametrizacionController

@@ -207,6 +207,7 @@ $siguiente_numero = $facturaModel->obtenerSiguienteNumero($id_empresa);
 </div>
 
 <!-- Scripts unificados (Lógica adaptada al nuevo UI) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../../public/js/facturas.js"></script>
 
 <?php require_once '../layouts/footer.php'; ?>

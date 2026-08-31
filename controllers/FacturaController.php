@@ -87,8 +87,17 @@ class FacturaController
         $total_pagar = (float)$data['total_pagar'];
         $detalles = $data['detalles'];
 
-        $facturaModel = new Factura();
-        $resultado = $facturaModel->crearFactura($id_empresa, $id_cliente, $id_usuario, $subtotal, $total_iva, $total_pagar, $detalles);
+        try {
+            $facturaModel = new Factura();
+            $resultado = $facturaModel->crearFactura($id_empresa, $id_cliente, $id_usuario, $subtotal, $total_iva, $total_pagar, $detalles);
+        } catch (Throwable $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Error del servidor al generar la factura: ' . $e->getMessage()
+            ]);
+            exit;
+        }
 
         if ($resultado['success']) {
             $borradorModel = new VentaBorrador();

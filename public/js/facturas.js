@@ -492,7 +492,18 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataPayload)
         })
-        .then(response => response.json())
+        .then(async response => {
+            const responseText = await response.text();
+            let data;
+
+            try {
+                data = JSON.parse(responseText);
+            } catch (parseError) {
+                throw new Error(`HTTP ${response.status}: ${responseText.substring(0, 300)}`);
+            }
+
+            return data;
+        })
         .then(data => {
             if (data.success) {
                 // Redirigir la pestaña previamente abierta a la factura real
@@ -519,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => {
             console.error(error);
             if (printWindow) printWindow.close();
-            Swal.fire('Error Crítico', 'Falló la comunicación con el servidor.', 'error');
+            Swal.fire('Error Crítico', error.message || 'Falló la comunicación con el servidor.', 'error');
             btnProcesar.innerHTML = 'CONFIRMAR VENTA';
             btnProcesar.disabled = false;
         });

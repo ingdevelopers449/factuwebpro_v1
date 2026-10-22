@@ -28,9 +28,15 @@
                 <!-- Nuevo Logo SVG -->
                 <img src="../img/logo_nuevo.svg" alt="FactuWeb PRO Logo" class="logo-img">
             </a>
-            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <i class="fa-solid fa-bars text-white fs-2"></i>
-            </button>
+            
+            <!-- Botones móviles visibles siempre -->
+            <div class="d-flex align-items-center gap-2 d-lg-none">
+                <a class="btn btn-white btn-sm px-3 fw-bold" href="../views/auth/login.php" style="padding: 0.4rem 1rem;">Ingresar</a>
+                <button class="navbar-toggler border-0 shadow-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <i class="fa-solid fa-bars text-white fs-2"></i>
+                </button>
+            </div>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto align-items-lg-center">
                     <li class="nav-item"><a class="nav-link active" href="#inicio">Inicio</a></li>
@@ -38,9 +44,10 @@
                     <li class="nav-item"><a class="nav-link" href="#funcionamiento">Cómo Funciona</a></li>
                     <li class="nav-item"><a class="nav-link" href="#beneficios">Beneficios</a></li>
                 </ul>
-                <div class="d-flex align-items-center mt-3 mt-lg-0 gap-3">
+                <!-- Botón escritorio -->
+                <div class="d-flex align-items-center mt-3 mt-lg-0 gap-3 d-none d-lg-flex">
                     <a class="btn btn-white px-4" href="../views/auth/login.php">Ingresar</a>
-                    <div class="social-icons d-none d-lg-block">
+                    <div class="social-icons">
                         <a href="#"><i class="fa-brands fa-facebook"></i></a>
                         <a href="#"><i class="fa-brands fa-instagram"></i></a>
                         <a href="#"><i class="fa-brands fa-youtube"></i></a>

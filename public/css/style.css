@@ -692,3 +692,100 @@ body.ticket-pos {
 .bg-gradient-primary {
     background: linear-gradient(135deg, #12102f 0%, #1e1b4b 100%);
 }
+
+/* ==========================================================
+   DISEÑO RESPONSIVO (MOBILE-FIRST)
+   ========================================================== */
+@media (max-width: 768px) {
+    /* Tipografía y Espaciados Base */
+    html {
+        font-size: 14px; /* Reduce el tamaño base (1rem = 14px en lugar de 16px) */
+    }
+    body {
+        padding: 0;
+        margin: 0;
+        overflow-x: hidden;
+    }
+    
+    /* Encabezados y Textos */
+    h2, .h3 {
+        font-size: 1.5rem !important;
+    }
+    h5, .pos-section-title {
+        font-size: 1.1rem !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Ajustes generales de Padding (hace que las cajas no ocupen tanta pantalla) */
+    .p-4 { padding: 1rem !important; }
+    .py-4 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+    .px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+
+    /* --- SIDEBAR MÓVIL --- */
+    .app-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 260px;
+        z-index: 1060;
+        transform: translateX(-100%); /* Oculto por defecto */
+        transition: transform 0.3s ease-in-out;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+    }
+    .app-sidebar.show {
+        transform: translateX(0); /* Mostrar */
+    }
+    
+    /* --- APP MAIN --- */
+    .app-main {
+        width: 100%;
+        margin-left: 0 !important;
+    }
+    .app-topbar {
+        padding: 0 1rem !important;
+        height: 60px !important;
+        min-height: 60px !important;
+    }
+
+    /* Ocultar elementos no críticos en barra superior */
+    .breadcrumb {
+        display: none !important;
+    }
+
+    /* Módulo POS Específico */
+    .client-selected-card {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+    }
+    .client-selected-card > div {
+        font-size: 0.9rem;
+    }
+    
+    #loaderPOS {
+        padding: 2rem 0 !important;
+    }
+    
+    /* El resumen de venta pegajoso pero en móvil puede ocupar mucho espacio, lo dejamos normal o pegajoso abajo */
+    .card.h-auto {
+        position: relative !important; /* Quita el sticky para evitar que solape o rompa */
+        top: 0 !important;
+        margin-top: 1rem;
+    }
+    
+    /* El botón flotante de ayuda, más pequeño */
+    .btn-help-float {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+    
+    /* Formularios de Búsqueda */
+    .input-group {
+        flex-direction: row !important;
+        flex-wrap: nowrap;
+    }
+}
